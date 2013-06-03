@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-0.1 (unreleased)
+0.1 (2013-06-03)
 ================
 
 initial release
