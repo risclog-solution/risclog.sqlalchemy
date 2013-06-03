@@ -1,0 +1,8 @@
+=================================
+Change log for risclog.sqlalchemy
+=================================
+
+0.1 (unreleased)
+================
+
+initial release
