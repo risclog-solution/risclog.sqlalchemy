@@ -5,7 +5,7 @@ Change log for risclog.sqlalchemy
 0.3 (unreleased)
 ================
 
-- Nothing changed yet.
+- Repair db setup for reflected and unreflected objects.
 
 
 0.2 (2013-06-04)

@@ -7,7 +7,7 @@ import zope.interface
 import zope.sqlalchemy
 
 
-class ObjectBase(sqlalchemy.ext.declarative.DeferredReflection):
+class ObjectBase(object):
 
     @sqlalchemy.ext.declarative.declared_attr
     def __tablename__(cls):
@@ -46,10 +46,15 @@ class ObjectBase(sqlalchemy.ext.declarative.DeferredReflection):
         return cls.query().filter_by(**request.matchdict).first()
 
 
+class ReflectedObjectBase(
+        ObjectBase, sqlalchemy.ext.declarative.DeferredReflection):
+    pass
+
 # Reflection may (have to) happen before all model classes are imported. (We
 # might import the whole model before doing reflection but we don't want to
 # have to.) We therefore need to give each class another chance to do the
 # reflection after it is constructed.
+
 
 class EnsureDeferredReflection(sqlalchemy.ext.declarative.DeclarativeMeta):
 
@@ -61,7 +66,7 @@ class EnsureDeferredReflection(sqlalchemy.ext.declarative.DeclarativeMeta):
 
 
 ReflectedObject = sqlalchemy.ext.declarative.declarative_base(
-    cls=ObjectBase, metaclass=EnsureDeferredReflection)
+    cls=ReflectedObjectBase, metaclass=EnsureDeferredReflection)
 
 
 Object = sqlalchemy.ext.declarative.declarative_base(cls=ObjectBase)

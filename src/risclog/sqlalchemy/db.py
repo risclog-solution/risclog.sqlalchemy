@@ -29,7 +29,7 @@ class Database(object):
         # had access to a db engine so far, so give them a chance to do the
         # reflection now. We might do this when publishing the database
         # utility but we don't want to have to.
-        risclog.sqlalchemy.model.Object.prepare(self.engine)
+        risclog.sqlalchemy.model.ReflectedObject.prepare(self.engine)
 
     def _verify(self):
         # Step 1: Try to identify a testing table
