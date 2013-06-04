@@ -60,5 +60,8 @@ class EnsureDeferredReflection(sqlalchemy.ext.declarative.DeclarativeMeta):
             cls.prepare(db.engine)
 
 
-Object = sqlalchemy.ext.declarative.declarative_base(
+ReflectedObject = sqlalchemy.ext.declarative.declarative_base(
     cls=ObjectBase, metaclass=EnsureDeferredReflection)
+
+
+Object = sqlalchemy.ext.declarative.declarative_base(cls=ObjectBase)
