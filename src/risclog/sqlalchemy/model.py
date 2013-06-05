@@ -1,5 +1,4 @@
 from risclog.sqlalchemy.interfaces import IDatabase, Added
-import json
 import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
@@ -25,6 +24,11 @@ class ObjectBase(object):
             setattr(obj, key, value)
         obj.persist()
         return obj
+
+    @classmethod
+    def create_defaults(cls):
+        """Overwrite in subclass to create example data of this model."""
+        pass
 
     def __json__(self, request):
         """Returns json serializable representation of this object."""
