@@ -1,10 +1,12 @@
 from risclog.sqlalchemy.interfaces import IDatabase, Added
+import json
 import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
 import zope.component
 import zope.interface
 import zope.sqlalchemy
+import risclog.sqlalchemy.serializer
 
 
 class ObjectBase(object):
@@ -23,6 +25,10 @@ class ObjectBase(object):
             setattr(obj, key, value)
         obj.persist()
         return obj
+
+    def __json__(self, request):
+        """Returns json serializable representation of this object."""
+        return risclog.sqlalchemy.serializer.sqlalchemy_encode(self)
 
     def persist(self):
         """Add make the newly created object known to the database."""
