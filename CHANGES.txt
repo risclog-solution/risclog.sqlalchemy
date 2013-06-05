@@ -7,6 +7,9 @@ Change log for risclog.sqlalchemy
 
 - Add helper to provide transparent json encoding of sqlalchemy mapped objects.
 
+- Add `create_defaults` class method on base model which can be used to create
+  test data into the database.
+
 
 0.3 (2013-06-04)
 ================
