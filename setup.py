@@ -26,7 +26,7 @@ setup(
         'psycopg2',
     ],
 
-    extras_require={},
+    extras_require={'test': ['mock']},
 
     entry_points={},
 
