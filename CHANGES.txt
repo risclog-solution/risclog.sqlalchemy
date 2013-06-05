@@ -5,7 +5,7 @@ Change log for risclog.sqlalchemy
 0.4 (unreleased)
 ================
 
-- Nothing changed yet.
+- Add helper to provide transparent json encoding of sqlalchemy mapped objects.
 
 
 0.3 (2013-06-04)
