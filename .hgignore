@@ -3,6 +3,7 @@ syntax: glob
 .installed.cfg
 bin
 build
+*.egg-info
 develop-eggs
 dist
 doc/_api
