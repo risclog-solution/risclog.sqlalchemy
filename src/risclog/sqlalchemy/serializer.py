@@ -1,6 +1,10 @@
+from .model import ObjectBase
+import datetime
+import decimal
 import json
-import sqlalchemy.orm
 import logging
+import pyramid.renderers
+import sqlalchemy.orm
 
 log = logging.getLogger(__name__)
 
@@ -14,6 +18,31 @@ def sqlalchemy_encode(o):
 
 def patch():
     log.warn(u'Applying monkey patch: json '
-             u'default encoder for sqlalchemy models.')
+             u'default encoder for sqlalchemy models, datetime and float.')
     json._default_encoder._default_orig = json._default_encoder.default
-    json._default_encoder.default = sqlalchemy_encode
+    json._default_encoder.default = encode
+
+
+def datetime_encode(o, request=None):
+    return o.isoformat()
+
+
+def decimal_encode(o, request=None):
+    return unicode(o)
+
+
+ENCODERS = {ObjectBase: sqlalchemy_encode,
+            datetime.date: datetime_encode,
+            datetime.datetime: datetime_encode,
+            decimal.Decimal: decimal_encode}
+
+
+def encode(o):
+    for klass, encoder in ENCODERS.items():
+        if isinstance(o, klass):
+            return encoder(o)
+
+
+json_renderer = pyramid.renderers.JSON()
+for klass, encoder in ENCODERS.items():
+    json_renderer.add_adapter(klass, encoder)
