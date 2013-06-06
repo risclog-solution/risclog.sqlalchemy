@@ -5,7 +5,6 @@ import sqlalchemy.orm
 import zope.component
 import zope.interface
 import zope.sqlalchemy
-import risclog.sqlalchemy.serializer
 
 
 class ObjectBase(object):
@@ -32,6 +31,7 @@ class ObjectBase(object):
 
     def __json__(self, request):
         """Returns json serializable representation of this object."""
+        import risclog.sqlalchemy.serializer  # prevent circular import
         return risclog.sqlalchemy.serializer.sqlalchemy_encode(self)
 
     def persist(self):
