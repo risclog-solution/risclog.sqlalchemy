@@ -22,6 +22,10 @@ setup(
     install_requires=[
         'distribute',
         'SQLAlchemy',
+        'zope.component',
+        'zope.sqlalchemy',
+        'pyramid',
+        'pytz',
         'zope.interface',
         'psycopg2',
     ],
