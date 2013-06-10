@@ -3,7 +3,14 @@ import zope.interface.interfaces
 
 
 class IDatabase(zope.interface.Interface):
-    pass
+
+    def setup_utility():
+        """Register the database as a ZCA utility.
+
+        Also verifies that the testing status of the database and this utility
+        match.
+
+        """
 
 
 class Added(zope.interface.interfaces.ObjectEvent):
