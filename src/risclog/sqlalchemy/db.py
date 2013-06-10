@@ -9,9 +9,8 @@ import zope.interface
 import zope.sqlalchemy
 
 
+@zope.interface.implementer(risclog.sqlalchemy.interfaces.IDatabase)
 class Database(object):
-
-    zope.interface.implements(risclog.sqlalchemy.interfaces.IDatabase)
 
     def __init__(self, dsn, engine_args={}, testing=False):
         self.dsn = dsn
