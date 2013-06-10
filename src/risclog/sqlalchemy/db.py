@@ -67,3 +67,7 @@ class Database(object):
 
     def query(self, *args, **kw):
         return self.session.query(*args, **kw)
+
+    def setup_utility(self):
+        self._verify()
+        zope.component.provideUtility(self)
