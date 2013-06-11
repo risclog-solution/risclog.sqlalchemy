@@ -4,6 +4,7 @@ import risclog.sqlalchemy.model
 import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
+import transaction
 import zope.component
 import zope.interface
 import zope.sqlalchemy
@@ -70,3 +71,16 @@ class Database(object):
     def setup_utility(self):
         self._verify()
         zope.component.provideUtility(self)
+
+    def empty(self, table_names=None):
+        transaction.abort()
+        if table_names is None:
+            inspector = sqlalchemy.engine.reflection.Inspector.from_engine(
+                self.session.bind)
+            table_names = inspector.get_table_names()
+        if not table_names:
+            return
+        tables = ', '.join('"%s"' % x for x in table_names)
+        self.session.execute('TRUNCATE %s RESTART IDENTITY' % tables)
+        zope.sqlalchemy.mark_changed(self.session)
+        transaction.commit()

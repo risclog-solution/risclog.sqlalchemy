@@ -5,7 +5,7 @@ Change log for risclog.sqlalchemy
 0.5 (unreleased)
 ================
 
-- Add Database method for setting up a database utility.
+- Add Database methods for setting up a database utility and emptying tables.
 
 
 0.4 (2013-06-07)
