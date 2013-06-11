@@ -20,14 +20,15 @@ setup(
     version='0.5.dev0',
 
     install_requires=[
-        'distribute',
         'SQLAlchemy',
-        'zope.component',
-        'zope.sqlalchemy',
+        'distribute',
+        'plone.testing',
+        'psycopg2',
         'pyramid',
         'pytz',
+        'zope.component',
         'zope.interface',
-        'psycopg2',
+        'zope.sqlalchemy',
     ],
 
     extras_require={'test': ['mock']},

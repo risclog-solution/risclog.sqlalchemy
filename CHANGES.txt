@@ -7,6 +7,8 @@ Change log for risclog.sqlalchemy
 
 - Add Database methods for setting up a database utility and emptying tables.
 
+- Add testing layer that sets up a database utility (requires plone.testing).
+
 
 0.4 (2013-06-07)
 ================
