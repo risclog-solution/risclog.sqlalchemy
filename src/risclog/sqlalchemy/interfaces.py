@@ -12,6 +12,11 @@ class IDatabase(zope.interface.Interface):
 
         """
 
+    def empty(table_names=None):
+        """Truncate any tables passed, or all tables found in the db.
+
+        """
+
 
 class Added(zope.interface.interfaces.ObjectEvent):
     """An object has been created and added to the session."""
