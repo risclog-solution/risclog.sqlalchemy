@@ -22,7 +22,6 @@ setup(
     install_requires=[
         'SQLAlchemy',
         'distribute',
-        'plone.testing',
         'psycopg2',
         'pyramid',
         'pytz',
@@ -31,7 +30,9 @@ setup(
         'zope.sqlalchemy',
     ],
 
-    extras_require={'test': ['mock']},
+    extras_require={'test': ['mock'],
+                    'python2': ['plone.testing'],
+                    },
 
     entry_points={},
 
