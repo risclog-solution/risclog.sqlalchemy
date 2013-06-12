@@ -1,5 +1,9 @@
 import unittest
-import mock
+
+try:
+    from unittest import mock
+except ImportError:
+    import mock
 
 
 class ObjectBaseTests(unittest.TestCase):
@@ -10,4 +14,3 @@ class ObjectBaseTests(unittest.TestCase):
         model = risclog.sqlalchemy.model.ObjectBase()
         model.__json__({})
         sql_enc.assert_called_once_with(model)
-
