@@ -31,14 +31,22 @@ def tearDownDB(db):
     db.drop()
 
 
+def setUp(managed_tables=None):
+    db_util = zope.component.getUtility(
+        risclog.sqlalchemy.interfaces.IDatabase)
+    db_util.empty(managed_tables)
+
+
+def tearDown():
+    db_util = zope.component.getUtility(
+        risclog.sqlalchemy.interfaces.IDatabase)
+    db_util.session.close_all()
+
+
 class TestCase(unittest.TestCase):
 
     def setUp(self, managed_tables=None):
-        db_util = zope.component.getUtility(
-            risclog.sqlalchemy.interfaces.IDatabase)
-        db_util.empty(managed_tables)
+        setUp(managed_tables)
 
     def tearDown(self):
-        db_util = zope.component.getUtility(
-            risclog.sqlalchemy.interfaces.IDatabase)
-        db_util.session.close_all()
+        tearDown()
