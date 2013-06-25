@@ -72,6 +72,9 @@ class Database(object):
         self._verify()
         zope.component.provideUtility(self)
 
+    def teardown_utility(self):
+        zope.component.getGlobalSiteManager().unregisterUtility(self)
+
     def empty(self, table_names=None):
         transaction.abort()
         if table_names is None:
@@ -84,3 +87,6 @@ class Database(object):
         self.session.execute('TRUNCATE %s RESTART IDENTITY' % tables)
         zope.sqlalchemy.mark_changed(self.session)
         transaction.commit()
+
+    def close(self):
+        self.engine.dispose()
