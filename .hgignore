@@ -1,9 +1,10 @@
 syntax: glob
 
+*.egg-info
 .installed.cfg
+__pycache__
 bin
 build
-*.egg-info
 develop-eggs
 dist
 doc/_api
