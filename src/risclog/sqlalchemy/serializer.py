@@ -6,6 +6,7 @@ import logging
 import pyramid.renderers
 import sqlalchemy.orm
 
+
 log = logging.getLogger(__name__)
 
 
@@ -28,7 +29,7 @@ def datetime_encode(o, request=None):
 
 
 def decimal_encode(o, request=None):
-    return unicode(o)
+    return str(o)
 
 
 ENCODERS = {ObjectBase: sqlalchemy_encode,
