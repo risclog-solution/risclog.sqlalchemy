@@ -17,13 +17,12 @@ def project_path(*names):
 
 setup(
     name='risclog.sqlalchemy',
-    version='0.7.dev0',
+    version='1.0.dev0',
 
     install_requires=[
         'SQLAlchemy',
         'distribute',
         'psycopg2',
-        'pyramid',
         'pytz',
         'zope.component',
         'zope.interface',
@@ -32,6 +31,7 @@ setup(
 
     extras_require={'test': ['mock'],
                     'python2': ['plone.testing'],
+                    'pyramid': ['pyramid'],
                     },
 
     entry_points={},
