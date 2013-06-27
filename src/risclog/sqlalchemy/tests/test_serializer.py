@@ -8,10 +8,10 @@ import pytz
 import decimal
 
 
-class TestModel(risclog.sqlalchemy.model.Object):
+class ExampleModel(risclog.sqlalchemy.model.Object):
     foo = Column(Text, primary_key=True)
 
-test_object = TestModel()
+test_object = ExampleModel()
 test_object.foo = u'bar'
 
 
