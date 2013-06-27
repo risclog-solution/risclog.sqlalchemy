@@ -2,10 +2,10 @@
 Change log for risclog.sqlalchemy
 =================================
 
-0.7 (unreleased)
+1.0 (unreleased)
 ================
 
-- Nothing changed yet.
+- BACKWARD INCOMPATIBLE: Move pyramid patches to setup ``pyramid`` extra.
 
 
 0.6 (2013-06-27)
