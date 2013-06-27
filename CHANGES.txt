@@ -11,6 +11,8 @@ Change log for risclog.sqlalchemy
 
 - Using py.test as testrunner.
 
+- Added Python 3.3 compatibility.
+
 
 0.5 (2013-06-14)
 ================
