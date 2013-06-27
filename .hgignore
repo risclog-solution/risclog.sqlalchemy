@@ -1,6 +1,7 @@
 syntax: glob
 
 *.egg-info
+*.pyc
 .installed.cfg
 __pycache__
 bin
