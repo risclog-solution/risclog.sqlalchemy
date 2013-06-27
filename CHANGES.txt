@@ -9,6 +9,8 @@ Change log for risclog.sqlalchemy
 
 - Updated to Buildout 2.
 
+- Using py.test as testrunner.
+
 
 0.5 (2013-06-14)
 ================
