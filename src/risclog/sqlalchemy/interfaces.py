@@ -6,7 +6,7 @@ import zope.interface.interfaces
 class IDatabase(zope.interface.Interface):
     """Utility which is able to coordinate the access to multiple databases."""
 
-    def register_engine(name=_BLANK, dsn=None, engine_args={}):
+    def register_engine(dsn, engine_args={}, name=_BLANK):
         """Register a new engine with the database utility."""
 
     def get_engine(name=_BLANK):

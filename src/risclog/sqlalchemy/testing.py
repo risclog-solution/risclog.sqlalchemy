@@ -20,7 +20,7 @@ def setUpDB(factory, name=_BLANK):
             'Database {}@{} already exists!'.format(db.db_name, db.db_host))
     db.create()
     db_util = risclog.sqlalchemy.db.get_database(testing=True)
-    db_util.register_engine(name, db.dsn)
+    db_util.register_engine(db.dsn, name=name)
     return db
 
 
