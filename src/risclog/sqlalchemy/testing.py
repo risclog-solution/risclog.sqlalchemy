@@ -41,13 +41,15 @@ def tearDownDB(db, name=_BLANK):
         db_util._teardown_utility()
 
 
-def database_fixture_factory(request, prefix, name=_BLANK, schema_path=None):
+def database_fixture_factory(request, prefix, name=_BLANK, schema_path=None,
+                             create_all=False):
     """Factory creating a py.test fixture for a database.
 
     request ... request fixture
     prefix  ... str to prefix name of created database
     name ... str name of database to support multiple databases
     schema_path ... load this schema into the created database
+    create_all ... Create all tables etc. in database?
 
     Usage example::
 
@@ -64,8 +66,12 @@ def database_fixture_factory(request, prefix, name=_BLANK, schema_path=None):
         tearDownDB(db, name)
 
     db = setUpDB(db_factory, name)
+    db_util = get_db_util()
+    if create_all:
+        db_util.create_all(name)
+        transaction.commit()
     request.addfinalizer(dropdb)
-    return get_db_util()
+    return db_util
 
 
 def setUp(managed_tables=None):
