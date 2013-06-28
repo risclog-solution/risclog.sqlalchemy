@@ -15,7 +15,10 @@ _ENGINE_CLASS_MAPPING = {}
 
 def register_class(class_):
     """Register a (base) class for an engine."""
-    _ENGINE_CLASS_MAPPING[class_._engine_name] = class_
+    name = class_._engine_name
+    assert name not in _ENGINE_CLASS_MAPPING, \
+      'Registering name `{}` again.'.format(name)
+    _ENGINE_CLASS_MAPPING[name] = class_
 
 
 class RoutingSession(sqlalchemy.orm.Session):
@@ -63,6 +66,8 @@ class Database(object):
         self._setup_utility()
 
     def register_engine(self, dsn, engine_args={}, name=_BLANK):
+        assert name not in self._engines, \
+            'Registering name `{}` again.'.format(name)
         engine_args['echo'] = bool(int(os.environ.get(
             'ECHO_SQLALCHEMY_QUERIES', '0')))
         engine = sqlalchemy.create_engine(dsn, **engine_args)
