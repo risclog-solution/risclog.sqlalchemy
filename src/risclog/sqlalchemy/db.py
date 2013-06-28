@@ -62,7 +62,7 @@ class Database(object):
                     keep_session=testing)))
         self._setup_utility()
 
-    def register_engine(self, name=_BLANK, dsn=None, engine_args={}):
+    def register_engine(self, dsn, engine_args={}, name=_BLANK):
         engine_args['echo'] = bool(int(os.environ.get(
             'ECHO_SQLALCHEMY_QUERIES', '0')))
         engine = sqlalchemy.create_engine(dsn, **engine_args)
