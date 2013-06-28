@@ -27,3 +27,27 @@ def patched_serializer(request):
     """Patch pyramid serializer to be able to serialize Decimal and Datetime."""
     risclog.sqlalchemy.serializer.patch()
     request.addfinalizer(risclog.sqlalchemy.serializer.unpatch)
+
+
+@pytest.fixture(scope='function')
+def test_model(request):
+    """Create testmodel for test_serializer."""
+    from sqlalchemy import Column, Text
+    import risclog.sqlalchemy.model
+
+    class TestObject(risclog.sqlalchemy.model.ObjectBase):
+        _engine_name = 'test_serializer'
+
+    Object = risclog.sqlalchemy.model.declarative_base(TestObject)
+
+    class ExampleModel(Object):
+        __tablename__ = 'foo'
+        foo = Column(Text, primary_key=True)
+
+    def unregister_model():
+        del risclog.sqlalchemy.db._ENGINE_CLASS_MAPPING['test_serializer']
+
+    test_object = ExampleModel()
+    test_object.foo = u'bar'
+    request.addfinalizer(unregister_model)
+    return test_object
