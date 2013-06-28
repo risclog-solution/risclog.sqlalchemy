@@ -29,11 +29,14 @@ setup(
         'zope.sqlalchemy',
     ],
 
-    extras_require={'test': ['mock',
-                             'gocept.testdb'],
-                    'python2': ['plone.testing'],
-                    'pyramid': ['pyramid'],
-                    },
+    extras_require={
+        'test': [
+            'mock',
+            'gocept.testdb',
+        ],
+        'python2': ['plone.testing'],
+        'pyramid': ['pyramid'],
+    },
 
     entry_points={},
 
