@@ -52,6 +52,13 @@ def test__verify_engine_checks_whether_the_correct_database_is_accessed(
         'Not working against correct database (live vs testing).')
 
 
+def test_register_engine_bails_when_registering_an_engine_for_an_existing_name(
+        database_1)
+    with pytest.raises(AssertionError) as err:
+        database_1.register_engine('<dsn>', name='db1')
+    assert str(err) == ''
+
+
 def test_get_database_returns_database_utility(database_1):
     from ..db import get_database, Database
     db = get_database(testing=True)
