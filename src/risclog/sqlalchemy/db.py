@@ -24,14 +24,20 @@ def register_class(class_):
 class RoutingSession(sqlalchemy.orm.Session):
     """Session which routes mapped objects to the correct database engine."""
     def get_bind(self, mapper=None, clause=None):
-        if not mapper:
-            raise RuntimeError(
-                "Don't know how to determine engine, no mapper.")
         db_util = zope.component.getUtility(
             risclog.sqlalchemy.interfaces.IDatabase)
+
+        if not mapper:
+            if len(_ENGINE_CLASS_MAPPING) == 1:
+                return db_util.get_engine(
+                    list(_ENGINE_CLASS_MAPPING.keys())[0])
+            raise RuntimeError(
+                "Don't know how to determine engine, no mapper.")
+
         for engine_name, class_ in _ENGINE_CLASS_MAPPING.items():
             if issubclass(mapper.class_, class_):
                 return db_util.get_engine(engine_name)
+
         raise RuntimeError(
             "Did not find an engine for {}".format(mapper.class_))
 
