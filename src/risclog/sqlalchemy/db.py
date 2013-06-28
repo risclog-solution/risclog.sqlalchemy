@@ -1,6 +1,6 @@
+from zope.component._compat import _BLANK
 import os
 import risclog.sqlalchemy.interfaces
-import risclog.sqlalchemy.model
 import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
@@ -10,30 +10,93 @@ import zope.interface
 import zope.sqlalchemy
 
 
+# Mapping engine name registered using Database.register_engine --> base class
+_ENGINE_CLASS_MAPPING = {}
+
+def register_class(class_):
+    """Register a (base) class for an engine."""
+    _ENGINE_CLASS_MAPPING[class_._engine_name] = class_
+
+
+class RoutingSession(sqlalchemy.orm.Session):
+    """Session which routes mapped objects to the correct database engine."""
+    def get_bind(self, mapper=None, clause=None):
+        if not mapper:
+            raise RuntimeError(
+                "Don't know how to determine engine, no mapper.")
+        db_util = zope.component.getUtility(
+            risclog.sqlalchemy.interfaces.IDatabase)
+        for engine_name, class_ in _ENGINE_CLASS_MAPPING.items():
+            if issubclass(mapper.class_, class_):
+                return db_util.get_engine(engine_name)
+        raise RuntimeError(
+            "Did not find an engine for {}".format(mapper.class_))
+
+
+def get_database(testing=False):
+    """Get or create the database utility."""
+    db = zope.component.queryUtility(
+        risclog.sqlalchemy.interfaces.IDatabase)
+    if db is None:
+        db = Database(testing)
+    assert db.testing == testing, \
+      'Requested testing status `{}` does not match Database.testing.'.format(
+          testing)
+    return db
+
+
 @zope.interface.implementer(risclog.sqlalchemy.interfaces.IDatabase)
 class Database(object):
 
-    def __init__(self, dsn, engine_args={}, testing=False):
-        self.dsn = dsn
+    def __init__(self, testing=False):
+        assert zope.component.queryUtility(
+            risclog.sqlalchemy.interfaces.IDatabase) is None, \
+            'Cannot create Database twice, use `.get_database()` to get '\
+            'the instance.'
+        self._engines = {}
         self.testing = testing
-        self._verify()
-        engine_args['echo'] = bool(int(os.environ.get(
-            'ECHO_SQLALCHEMY_QUERIES', '0')))
-        self.engine = sqlalchemy.create_engine(dsn, **engine_args)
         self.session_factory = sqlalchemy.orm.scoped_session(
             sqlalchemy.orm.sessionmaker(
-                bind=self.engine,
+                class_=RoutingSession,
                 extension=zope.sqlalchemy.ZopeTransactionExtension(
                     keep_session=testing)))
+        self._setup_utility()
+
+    def register_engine(self, name=_BLANK, dsn=None, engine_args={}):
+        engine_args['echo'] = bool(int(os.environ.get(
+            'ECHO_SQLALCHEMY_QUERIES', '0')))
+        engine = sqlalchemy.create_engine(dsn, **engine_args)
+        self._verify_engine(engine)
+        self._engines[name] = engine
         # Some model classes may already have been constructed without having
         # had access to a db engine so far, so give them a chance to do the
-        # reflection now. We might do this when publishing the database
-        # utility but we don't want to have to.
-        risclog.sqlalchemy.model.ReflectedObject.prepare(self.engine)
+        # reflection now.
+        self.prepare_deferred(_ENGINE_CLASS_MAPPING.get(name))
 
-    def _verify(self):
+    def get_engine(self, name=_BLANK):
+        return self._engines[name]
+
+    def get_all_engines(self):
+        return self._engines.values()
+
+    def drop_engine(self, name=_BLANK):
+        engine = self.get_engine(name)
+        engine.dispose()
+        del self._engines[name]
+
+    def prepare_deferred(self, class_):
+        if class_ is None:
+            return
+        if issubclass(class_, sqlalchemy.ext.declarative.DeferredReflection):
+            class_.prepare(self.get_engine(class_._engine_name))
+
+    def create_all(self, engine_name=_BLANK):
+        """Create all tables etc. for an engine."""
+        _ENGINE_CLASS_MAPPING[engine_name].metadata.create_all(
+            self.get_engine(engine_name))
+
+    def _verify_engine(self, engine):
         # Step 1: Try to identify a testing table
-        engine = sqlalchemy.create_engine(self.dsn)
         conn = engine.connect()
         try:
             conn.execute("SELECT * FROM tmp_functest")
@@ -53,7 +116,8 @@ class Database(object):
 
         # We're not in a valid state. Bail out.
         raise SystemExit("Not working against correct database (live vs "
-                         "testing). Refusing to set up database connection.")
+                         "testing). Refusing to set up database connection "
+                         "to {}.".format(engine.url))
 
     @property
     def session(self):
@@ -68,25 +132,22 @@ class Database(object):
     def query(self, *args, **kw):
         return self.session.query(*args, **kw)
 
-    def setup_utility(self):
-        self._verify()
+    def _setup_utility(self):
         zope.component.provideUtility(self)
 
-    def teardown_utility(self):
+    def _teardown_utility(self):
         zope.component.getGlobalSiteManager().unregisterUtility(self)
 
-    def empty(self, table_names=None):
+    def empty(self, engine, table_names=None):
         transaction.abort()
         if table_names is None:
             inspector = sqlalchemy.engine.reflection.Inspector.from_engine(
-                self.session.bind)
+                engine)
             table_names = inspector.get_table_names()
         if not table_names:
             return
         tables = ', '.join('"%s"' % x for x in table_names)
-        self.session.execute('TRUNCATE %s RESTART IDENTITY' % tables)
+        self.session.execute('TRUNCATE %s RESTART IDENTITY' % tables,
+                             bind=engine)
         zope.sqlalchemy.mark_changed(self.session)
         transaction.commit()
-
-    def close(self):
-        self.engine.dispose()

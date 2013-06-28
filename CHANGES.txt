@@ -2,12 +2,63 @@
 Change log for risclog.sqlalchemy
 =================================
 
-0.6 (unreleased)
+1.0 (unreleased)
+================
+
+- CAUTION: Backward incompatible changes to provide multiple database
+  support. You need to change:
+
+  * Use the ``pyramid`` extra to use the pyramid serializers and call
+    ``.serializer.patch()`` by yourself.
+
+  * Changes in `.model`:
+
+    + Use `.model.declarative_base(cls)` to register a class as SQLALchemy
+      ``declarative_base``.
+
+    + Use your own declarative_base as `.model.Object` has been dropped.
+
+    + Create your own `ReflectedObject` as `.model.ReflectedObject` has been
+      dropped.
+
+  * Changes in `.db.Database`:
+
+    + To get an instance use `.db.get_database(testing=<True|False>)`.
+
+    + To register a database with the utility use ``register_engine``.
+
+    + ``empty`` now expects to get the engine as first argument.
+
+    + ``_verify`` was removed, use ``_verify_engine`` now.
+
+    + ``setup_utility`` was removed, it is now done in ``__init__``.
+
+    + To access former ``engine``` attribute use ``get_engine``.
+
+    + ``close`` was renamed to ``drop_engine``.
+
+    + To create all tables for a database use ``create_all``.
+
+  * Changes in `.testing`:
+
+    + ``setUpDB`` lost its first argument as it was not used.
+
+    + ``setUp`` now expects a dict or ``None``, see its docstring.
+
+- Added convenience functions to create `py.test` database fixtures.
+
+
+0.6 (2013-06-27)
 ================
 
 - Added convenience methods on `.db.Database` for teardown in tests.
 
-- Added convenience functions to create py.test database fixtures.
+- Updated to Buildout 2.
+
+- Using py.test as testrunner.
+
+- Added Python 3.3 compatibility.
+
 
 0.5 (2013-06-14)
 ================
