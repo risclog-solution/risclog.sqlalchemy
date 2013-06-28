@@ -17,13 +17,12 @@ def project_path(*names):
 
 setup(
     name='risclog.sqlalchemy',
-    version='0.6.dev0',
+    version='1.0.dev0',
 
     install_requires=[
         'SQLAlchemy',
         'distribute',
         'psycopg2',
-        'pyramid',
         'pytz',
         'zope.component',
         'zope.interface',
@@ -33,6 +32,7 @@ setup(
     extras_require={'test': ['mock',
                              'gocept.testdb'],
                     'python2': ['plone.testing'],
+                    'pyramid': ['pyramid'],
                     },
 
     entry_points={},
@@ -49,7 +49,8 @@ Programming Language :: Python
 Programming Language :: Python :: 2
 Programming Language :: Python :: 2.6
 Programming Language :: Python :: 2.7
-Programming Language :: Python :: 2 :: Only
+Programming Language :: Python :: 3
+Programming Language :: Python :: 3.3
 """[:-1].split('\n'),
     description=__doc__.strip(),
     long_description='\n\n'.join(open(project_path(name)).read() for name in (

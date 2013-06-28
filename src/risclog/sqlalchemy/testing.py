@@ -7,43 +7,46 @@ import unittest
 import zope.component
 
 
-def setUpDB(factory):
+def get_db_util():
+    """Get the database utility registered with `name`."""
+    return zope.component.queryUtility(
+        risclog.sqlalchemy.interfaces.IDatabase)
+
+
+def setUpDB(factory, name=_BLANK):
     db = factory()
     if db.exists:
         raise ValueError(
             'Database {}@{} already exists!'.format(db.db_name, db.db_host))
     db.create()
-    db_util = risclog.sqlalchemy.db.Database(db.dsn, testing=True)
-    db_util.setup_utility()
+    db_util = risclog.sqlalchemy.db.get_database(testing=True)
+    db_util.register_engine(name, db.dsn)
     return db
 
 
-def get_db_util():
-    """Get the database utility registered with `name`."""
-    return zope.component.getUtility(
-        risclog.sqlalchemy.interfaces.IDatabase)
-
-
-def tearDownDB(db):
+def tearDownDB(db, name=_BLANK):
     # close all connections, but...
     transaction.abort()
     # ...sometimes transaction.abort() is not enough, and...
     db_util = get_db_util()
-    db_util.engine.dispose()
+    db_util.drop_engine(name)
     # ...connections that have been checked-out from the pool and not yet
     # returned are not closed by dispose, either, so we have to hunt them
     # down ourselves:
     for conn in sqlalchemy.pool._refs:
         conn.close()
     db.drop()
-    db_util.teardown_utility()
+    if not db_util.get_all_engines():
+        # Removed last database so we can drop the utility:
+        db_util._teardown_utility()
 
 
-def database_fixture_factory(request, prefix, schema_path=None):
+def database_fixture_factory(request, prefix, name=_BLANK, schema_path=None):
     """Factory creating a py.test fixture for a database.
 
     request ... request fixture
     prefix  ... str to prefix name of created database
+    name ... str name of database to support multiple databases
     schema_path ... load this schema into the created database
 
     Usage example::
@@ -58,16 +61,28 @@ def database_fixture_factory(request, prefix, schema_path=None):
             prefix=prefix, schema_path=schema_path)
 
     def dropdb():
-        tearDownDB(db)
+        tearDownDB(db, name)
 
-    db = setUpDB(db_factory)
+    db = setUpDB(db_factory, name)
     request.addfinalizer(dropdb)
     return get_db_util()
 
 
 def setUp(managed_tables=None):
+    """Set up session for test.
+
+    managed_tables ... if None: empty all table in all engines
+                       if dict: key is engine name, value is list of tables
+                                which should get emptyed.
+
+    """
     db_util = get_db_util()
-    db_util.empty(managed_tables)
+    if managed_tables is None:
+        for engine in db_util.get_all_engines():
+            db_util.empty(engine)
+    else:
+        for engine_name, tables in managed_tables.values():
+            db_util.empty(engine, tables)
 
 
 def tearDown():
@@ -80,18 +95,18 @@ def database_test_livecycle_fixture_factory(request):
 
     request ... request fixture
 
-        Usage example::
+    Usage example::
 
         @pytest.fixture(scope='function', autouse=True)
-        def database_session_livecycle(request, database):
+        def database_test_livecycle(request, database):
             return database_test_livecycle_fixture_factory()
 
-    """
-    def tear_down():
-        tearDown()
+    Caution: You need only one of these fixtures but it should depend on all
+    databases you use.
 
+    """
     risclog.sqlalchemy.testing.setUp()
-    request.addfinalizer(tear_down)
+    request.addfinalizer(tearDown)
 
 
 class TestCase(unittest.TestCase):

@@ -1,17 +1,24 @@
 from sqlalchemy import Column, Text
+import datetime
+import decimal
 import json
+import pytest
+import pytz
 import risclog.sqlalchemy.model
 import risclog.sqlalchemy.serializer
+import sqlalchemy.ext.declarative
 import unittest
-import datetime
-import pytz
-import decimal
 
 
-class TestModel(risclog.sqlalchemy.model.Object):
+Object = risclog.sqlalchemy.model.declarative_base(
+    cls=risclog.sqlalchemy.model.ObjectBase)
+
+
+class ExampleModel(Object):
+    __tablename__ = 'foo'
     foo = Column(Text, primary_key=True)
 
-test_object = TestModel()
+test_object = ExampleModel()
 test_object.foo = u'bar'
 
 
@@ -32,6 +39,7 @@ class EncoderTest(unittest.TestCase):
         self.assertEqual('3500.17', result)
 
 
+@pytest.mark.usefixtures('patched_serializer')
 class JSONDumpsMonkeyPatchTest(unittest.TestCase):
 
     def callFUT(self, data):
