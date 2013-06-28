@@ -20,6 +20,10 @@ def register_class(class_):
       'Registering name `{}` again.'.format(name)
     _ENGINE_CLASS_MAPPING[name] = class_
 
+def unregister_class(class_):
+    """Clear registration of a (base) class for an engine."""
+    del _ENGINE_CLASS_MAPPING[class_._engine_name]
+
 
 class RoutingSession(sqlalchemy.orm.Session):
     """Session which routes mapped objects to the correct database engine."""

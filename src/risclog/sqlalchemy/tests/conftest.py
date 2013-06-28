@@ -45,7 +45,7 @@ def test_model(request):
         foo = Column(Text, primary_key=True)
 
     def unregister_model():
-        del risclog.sqlalchemy.db._ENGINE_CLASS_MAPPING['test_serializer']
+        risclog.sqlalchemy.db.unregister_class(Object)
 
     test_object = ExampleModel()
     test_object.foo = u'bar'
