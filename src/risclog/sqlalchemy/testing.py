@@ -99,7 +99,7 @@ def database_test_livecycle_fixture_factory(request):
 
         @pytest.fixture(scope='function', autouse=True)
         def database_test_livecycle(request, database):
-            return database_test_livecycle_fixture_factory()
+            return database_test_livecycle_fixture_factory(request)
 
     Caution: You need only one of these fixtures but it should depend on all
     databases you use.
