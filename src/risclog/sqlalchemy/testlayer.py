@@ -16,7 +16,7 @@ class DatabaseLayer(plone.testing.Layer):
     def setUp(self):
         plone.testing.zca.pushGlobalRegistry()
         self[self._db_name] = risclog.sqlalchemy.testing.setUpDB(
-            self._db_name, self._db_factory)
+            self._db_factory, self._db_name)
 
     def tearDown(self):
         risclog.sqlalchemy.testing.tearDownDB(self[self._db_name])
