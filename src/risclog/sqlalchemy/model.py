@@ -30,6 +30,13 @@ class ObjectBase(object):
         return obj
 
     @classmethod
+    def find_or_create(cls, **kw):
+        try:
+            return cls.query().filter_by(**kw).one()
+        except sqlalchemy.orm.exc.NoResultFound:
+            return cls.create(**kw)
+
+    @classmethod
     def create_defaults(cls):
         """Overwrite in subclass to create example data of this model."""
         pass
