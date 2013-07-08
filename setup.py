@@ -21,9 +21,9 @@ setup(
 
     install_requires=[
         'SQLAlchemy',
-        'distribute',
         'psycopg2',
         'pytz',
+        'setuptools',
         'zope.component',
         'zope.interface',
         'zope.sqlalchemy',
