@@ -32,8 +32,9 @@ setup(
     extras_require={
         'test': [
             'gocept.testdb',
-            'pytest',
             'mock',
+            'pyramid',
+            'pytest',
         ],
         'python2': ['plone.testing'],
         'pyramid': ['pyramid'],
