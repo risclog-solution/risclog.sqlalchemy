@@ -17,6 +17,7 @@ def test_register_class_bails_when_registering_same_name_again():
             register_class(Dummy2)
         assert str(err.value) == 'Registering name `foobar` again.'
 
+
 def test_Database_is_able_to_handle_multiple_databases(
         database_1, database_2):
     from ..model import ObjectBase, declarative_base
