@@ -1,5 +1,7 @@
 import mock
+import pkg_resources
 import pytest
+import risclog.sqlalchemy.model
 
 
 def test_register_class_bails_when_registering_same_name_again():
@@ -19,7 +21,7 @@ def test_register_class_bails_when_registering_same_name_again():
 
 
 def test_Database_is_able_to_handle_multiple_databases(
-        database_1, database_2):
+        database_1, database_2, request):
     from ..model import ObjectBase, declarative_base
     from sqlalchemy import Column, Integer
     from sqlalchemy.engine.reflection import Inspector
@@ -37,6 +39,11 @@ def test_Database_is_able_to_handle_multiple_databases(
 
     class Model_2(Base_2):
         id = Column(Integer, primary_key=True)
+
+    def tearDown():
+        for class_ in [ObjectBase_1, ObjectBase_2]:
+            risclog.sqlalchemy.db.unregister_class(class_)
+    request.addfinalizer(tearDown)
 
     database_1.create_all('db1')
     database_1.create_all('db2')
@@ -91,3 +98,24 @@ def test_get_database_makes_sure_testing_matches(database_1):
         get_database(testing=False)
     assert str(err.value) == 'Requested testing status `False` does not ' \
                              'match Database.testing.'
+
+
+def test_assert_db_rev_raises_if_mismatch(database_1):
+    database_1._engines['db1']['alembic_location'] = \
+        pkg_resources.resource_filename(__name__, 'fixtures/alembic')
+    with pytest.raises(ValueError):
+        database_1.assert_database_revision_is_current('db1')
+
+
+def test_create_all_marks_alembic_current(database_1, request):
+    class TestObject(risclog.sqlalchemy.model.ObjectBase):
+        _engine_name = 'db1'
+    Object = risclog.sqlalchemy.model.declarative_base(TestObject)
+
+    request.addfinalizer(
+        lambda: risclog.sqlalchemy.db.unregister_class(Object))
+
+    database_1._engines['db1']['alembic_location'] = \
+        pkg_resources.resource_filename(__name__, 'fixtures/alembic')
+    database_1.create_all('db1')
+    database_1.assert_database_revision_is_current('db1')

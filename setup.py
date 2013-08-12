@@ -21,6 +21,7 @@ setup(
 
     install_requires=[
         'SQLAlchemy',
+        'alembic',
         'psycopg2',
         'pytz',
         'setuptools',

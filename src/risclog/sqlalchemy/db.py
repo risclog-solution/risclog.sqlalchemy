@@ -1,4 +1,7 @@
 from zope.component._compat import _BLANK
+import alembic.config
+import alembic.migration
+import alembic.script
 import os
 import risclog.sqlalchemy.interfaces
 import sqlalchemy
@@ -77,24 +80,26 @@ class Database(object):
                     keep_session=testing)))
         self._setup_utility()
 
-    def register_engine(self, dsn, engine_args={}, name=_BLANK):
+    def register_engine(self, dsn, engine_args={}, name=_BLANK,
+                        alembic_location=None):
         assert name not in self._engines, \
             'Registering name `{}` again.'.format(name)
         engine_args['echo'] = bool(int(os.environ.get(
             'ECHO_SQLALCHEMY_QUERIES', '0')))
         engine = sqlalchemy.create_engine(dsn, **engine_args)
         self._verify_engine(engine)
-        self._engines[name] = engine
+        self._engines[name] = dict(
+            engine=engine, alembic_location=alembic_location)
         # Some model classes may already have been constructed without having
         # had access to a db engine so far, so give them a chance to do the
         # reflection now.
         self.prepare_deferred(_ENGINE_CLASS_MAPPING.get(name))
 
     def get_engine(self, name=_BLANK):
-        return self._engines[name]
+        return self._engines[name]['engine']
 
     def get_all_engines(self):
-        return self._engines.values()
+        return [x['engine'] for x in self._engines.values()]
 
     def drop_engine(self, name=_BLANK):
         engine = self.get_engine(name)
@@ -109,8 +114,17 @@ class Database(object):
 
     def create_all(self, engine_name=_BLANK):
         """Create all tables etc. for an engine."""
+        engine = self._engines[engine_name]
         _ENGINE_CLASS_MAPPING[engine_name].metadata.create_all(
-            self.get_engine(engine_name))
+            engine['engine'])
+
+        # mark the database to be in the latest revision
+        location = engine['alembic_location']
+        if location:
+            with alembic_context(engine['engine'], location) as ac:
+                ac.migration_context._update_current_rev(
+                    ac.migration_context.get_current_revision(),
+                    ac.script.get_current_head())
 
     def _verify_engine(self, engine):
         # Step 1: Try to identify a testing table
@@ -135,6 +149,21 @@ class Database(object):
         raise SystemExit("Not working against correct database (live vs "
                          "testing). Refusing to set up database connection "
                          "to {}.".format(engine.url))
+
+    def assert_database_revision_is_current(self, engine_name=_BLANK):
+        engine = self._engines[engine_name]
+        location = engine['alembic_location']
+        if not location:
+            return
+        with alembic_context(engine['engine'], location) as ac:
+            head = ac.script.get_current_head()
+            db_rev = ac.migration_context.get_current_revision()
+            if head != db_rev:
+                raise ValueError(
+                    'Database revision {} of engine "{}" does not match '
+                    'current revision {}.\nMaybe you want to call '
+                    '`bin/alembic upgrade head`.'.format(
+                        db_rev, engine_name, head))
 
     @property
     def session(self):
@@ -168,3 +197,29 @@ class Database(object):
                              bind=engine)
         zope.sqlalchemy.mark_changed(self.session)
         transaction.commit()
+
+
+class alembic_context(object):
+
+    def __init__(self, engine, script_location):
+        self.engine = engine
+        self.script_location = script_location
+
+    def __enter__(self):
+        self.conn = conn = self.engine.connect()
+        return AlembicContext(conn, self.script_location)
+
+    def __exit__(self, exc_type, exc_value, tb):
+        self.conn.close()
+        if exc_type is not None:
+            raise exc_type(exc_value)
+
+
+class AlembicContext(object):
+
+    def __init__(self, conn, script_location):
+        config = alembic.config.Config()
+        config.set_main_option('script_location', script_location)
+        self.migration_context = (
+            alembic.migration.MigrationContext.configure(conn))
+        self.script = alembic.script.ScriptDirectory.from_config(config)
