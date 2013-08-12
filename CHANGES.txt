@@ -45,6 +45,8 @@ Change log for risclog.sqlalchemy
 
     + ``setUp`` now expects a dict or ``None``, see its docstring.
 
+- Added support for schema migrations with alembic.
+
 - Dropped support for `Python 2.6`.
 
 - Added convenience functions to create `py.test` database fixtures.
