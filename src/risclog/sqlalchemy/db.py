@@ -13,12 +13,14 @@ import zope.sqlalchemy
 # Mapping engine name registered using Database.register_engine --> base class
 _ENGINE_CLASS_MAPPING = {}
 
+
 def register_class(class_):
     """Register a (base) class for an engine."""
     name = class_._engine_name
     assert name not in _ENGINE_CLASS_MAPPING, \
-      'Registering name `{}` again.'.format(name)
+        'Registering name `{}` again.'.format(name)
     _ENGINE_CLASS_MAPPING[name] = class_
+
 
 def unregister_class(class_):
     """Clear registration of a (base) class for an engine."""
@@ -53,8 +55,8 @@ def get_database(testing=False):
     if db is None:
         db = Database(testing)
     assert db.testing == testing, \
-      'Requested testing status `{}` does not match Database.testing.'.format(
-          testing)
+        'Requested testing status `%s` does not match Database.testing.' % (
+            testing)
     return db
 
 
