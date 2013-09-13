@@ -21,7 +21,7 @@ def register_class(class_):
     """Register a (base) class for an engine."""
     name = class_._engine_name
     assert name not in _ENGINE_CLASS_MAPPING, \
-        'Registering name `{}` again.'.format(name)
+        'An engine for name `{}` is already registered.'.format(name)
     _ENGINE_CLASS_MAPPING[name] = class_
 
 
