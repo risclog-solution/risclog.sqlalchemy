@@ -17,11 +17,16 @@ import zope.sqlalchemy
 _ENGINE_CLASS_MAPPING = {}
 
 
+def assert_engine_not_registered(name, mapping):
+    """Ensure a consistent error message."""
+    assert name not in mapping, \
+        'An engine for name `{}` is already registered.'.format(name)
+
+
 def register_class(class_):
     """Register a (base) class for an engine."""
     name = class_._engine_name
-    assert name not in _ENGINE_CLASS_MAPPING, \
-        'An engine for name `{}` is already registered.'.format(name)
+    assert_engine_not_registered(name, _ENGINE_CLASS_MAPPING)
     _ENGINE_CLASS_MAPPING[name] = class_
 
 
@@ -82,8 +87,7 @@ class Database(object):
 
     def register_engine(self, dsn, engine_args={}, name=_BLANK,
                         alembic_location=None):
-        assert name not in self._engines, \
-            'Registering name `{}` again.'.format(name)
+        assert_engine_not_registered(name, self._engines)
         engine_args['echo'] = bool(int(os.environ.get(
             'ECHO_SQLALCHEMY_QUERIES', '0')))
         engine = sqlalchemy.create_engine(dsn, **engine_args)
