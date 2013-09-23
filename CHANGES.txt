@@ -54,6 +54,10 @@ Change log for risclog.sqlalchemy
 - Declared `pyramid` as test dependency so tests only need the ``test``
   extra.
 
+- Declared testing dependency on `plone.testing[test]` since we use
+  `plone.testing.zca` which imports that ``test`` extra's dependencies.
+
+
 0.6 (2013-06-27)
 ================
 
