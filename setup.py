@@ -37,7 +37,7 @@ setup(
             'pyramid',
             'pytest',
         ],
-        'python2': ['plone.testing'],
+        'python2': ['plone.testing[test]'],
         'pyramid': ['pyramid'],
     },
 
