@@ -108,6 +108,37 @@ def test_assert_db_rev_raises_if_mismatch(database_1):
         database_1.assert_database_revision_is_current('db1')
 
 
+def test_session_can_be_bound_to_spefic_database(
+        database_1, database_2, request):
+    from ..db import get_database
+    from ..model import ObjectBase, declarative_base
+    from sqlalchemy import Column, Integer
+
+    class ObjectBase_1(ObjectBase):
+        _engine_name = 'db1'
+    Base_1 = declarative_base(ObjectBase_1)
+
+    class Model_1(Base_1):
+        id = Column(Integer, primary_key=True)
+
+    class ObjectBase_2(ObjectBase):
+        _engine_name = 'db2'
+    Base_2 = declarative_base(ObjectBase_2)
+
+    def tearDown():
+        risclog.sqlalchemy.db.unregister_class(Model_1)
+    request.addfinalizer(tearDown)
+
+    database_1.create_all('db1')
+
+    db = get_database(testing=True)
+    # Using a clause (`count` in this case) unbound leads to an exception:
+    with pytest.raises(RuntimeError):
+        db.session.query(Model_1).count()
+    # Using a bound session leads to a result:
+    assert db.session.using_bind('db1').query(Model_1).count() == 0
+
+
 def test_create_all_marks_alembic_current(database_1, request):
     class TestObject(risclog.sqlalchemy.model.ObjectBase):
         _engine_name = 'db1'
