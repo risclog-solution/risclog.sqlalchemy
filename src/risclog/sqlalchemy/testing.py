@@ -13,14 +13,15 @@ def get_db_util():
         risclog.sqlalchemy.interfaces.IDatabase)
 
 
-def setUpDB(factory, name=_BLANK):
+def setUpDB(factory, name=_BLANK, alembic_location=None):
     db = factory()
     if db.exists:
         raise ValueError(
             'Database {}@{} already exists!'.format(db.db_name, db.db_host))
     db.create()
     db_util = risclog.sqlalchemy.db.get_database(testing=True)
-    db_util.register_engine(db.dsn, name=name)
+    db_util.register_engine(
+        db.dsn, name=name, alembic_location=alembic_location)
     return db
 
 
@@ -42,7 +43,7 @@ def tearDownDB(db, name=_BLANK):
 
 
 def database_fixture_factory(request, prefix, name=_BLANK, schema_path=None,
-                             create_all=False):
+                             create_all=False, alembic_location=None):
     """Factory creating a py.test fixture for a database.
 
     request ... request fixture
@@ -50,6 +51,7 @@ def database_fixture_factory(request, prefix, name=_BLANK, schema_path=None,
     name ... str name of database to support multiple databases
     schema_path ... load this schema into the created database
     create_all ... Create all tables etc. in database?
+    alembic_location ... Path where alembic migration scripts live.
 
     Usage example::
 
@@ -65,7 +67,7 @@ def database_fixture_factory(request, prefix, name=_BLANK, schema_path=None,
     def dropdb():
         tearDownDB(db, name)
 
-    db = setUpDB(db_factory, name)
+    db = setUpDB(db_factory, name, alembic_location)
     db_util = get_db_util()
     if create_all:
         db_util.create_all(name)
