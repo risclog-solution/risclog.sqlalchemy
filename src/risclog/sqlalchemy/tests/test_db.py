@@ -151,3 +151,20 @@ def test_create_all_marks_alembic_current(database_1, request):
         pkg_resources.resource_filename(__name__, 'fixtures/alembic')
     database_1.create_all('db1')
     database_1.assert_database_revision_is_current('db1')
+
+
+def test_update_database_revision_to_current(database_1, request):
+    class TestObject(risclog.sqlalchemy.model.ObjectBase):
+        _engine_name = 'db1'
+    Object = risclog.sqlalchemy.model.declarative_base(TestObject)
+
+    request.addfinalizer(
+        lambda: risclog.sqlalchemy.db.unregister_class(Object))
+
+    database_1._engines['db1']['alembic_location'] = \
+        pkg_resources.resource_filename(__name__, 'fixtures/alembic')
+    with pytest.raises(ValueError):
+        database_1.assert_database_revision_is_current('db1')
+    database_1.update_database_revision_to_current('db1')
+    database_1.assert_database_revision_is_current('db1')
+

@@ -15,8 +15,9 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    pass
+    op.create_table('foobar', sa.Column('id', sa.Integer()))
 
 
 def downgrade():
-    pass
+    op.drop_table('foobar')
+

@@ -1,6 +1,8 @@
 from zope.component._compat import _BLANK
 import alembic.config
+import alembic.environment
 import alembic.migration
+import alembic.op
 import alembic.script
 import os
 import risclog.sqlalchemy.interfaces
@@ -167,19 +169,21 @@ class Database(object):
                          "to {}.".format(engine.url))
 
     def assert_database_revision_is_current(self, engine_name=_BLANK):
-        engine = self._engines[engine_name]
-        location = engine['alembic_location']
-        if not location:
-            return
-        with alembic_context(engine['engine'], location) as ac:
-            head = ac.script.get_current_head()
-            db_rev = ac.migration_context.get_current_revision()
-            if head != db_rev:
+        def assert_revision(ac, head_rev, db_rev):
+            if head_rev != db_rev:
                 raise ValueError(
                     'Database revision {} of engine "{}" does not match '
                     'current revision {}.\nMaybe you want to call '
                     '`bin/alembic upgrade head`.'.format(
-                        db_rev, engine_name, head))
+                        db_rev, engine_name, head_rev))
+
+        self._run_in_alembic_context(assert_revision, engine_name)
+
+    def update_database_revision_to_current(self, engine_name=_BLANK):
+        def upgrade_revision(ac, head_rev, db_rev):
+            if head_rev != db_rev:
+                ac.upgrade(db_rev, head_rev)
+        self._run_in_alembic_context(upgrade_revision, engine_name)
 
     @property
     def session(self):
@@ -214,6 +218,24 @@ class Database(object):
         zope.sqlalchemy.mark_changed(self.session)
         transaction.commit()
 
+    def _run_in_alembic_context(self, func, engine_name=_BLANK):
+        """Run a function in `alembic_context`.
+
+        The function must take three parameters:
+        * ac ... AlembicContext object
+        * head_rev ... revision of alembic head
+        * db_rev ... revision of database
+
+        """
+        engine = self._engines[engine_name]
+        location = engine['alembic_location']
+        if not location:
+            return
+        with alembic_context(engine['engine'], location) as ac:
+            head_rev = ac.script.get_current_head()
+            db_rev = ac.migration_context.get_current_revision()
+            return func(ac, head_rev, db_rev)
+
 
 class alembic_context(object):
 
@@ -234,8 +256,20 @@ class alembic_context(object):
 class AlembicContext(object):
 
     def __init__(self, conn, script_location):
-        config = alembic.config.Config()
-        config.set_main_option('script_location', script_location)
-        self.migration_context = (
-            alembic.migration.MigrationContext.configure(conn))
-        self.script = alembic.script.ScriptDirectory.from_config(config)
+        self.conn = conn
+        self.config = alembic.config.Config()
+        self.config.set_main_option('script_location', script_location)
+        self.migration_context = alembic.migration.MigrationContext.configure(
+            conn)
+        self.script = alembic.script.ScriptDirectory.from_config(self.config)
+
+    def upgrade(self, start_rev, dest_rev):
+        """Upgrade from `start_rev` to `dest_rev`."""
+        def upgrade_fn(rev, context):
+            return self.script._upgrade_revs(dest_rev, rev)
+
+        with alembic.environment.EnvironmentContext(
+                self.config, self.script, fn=upgrade_fn,
+                starting_rev=start_rev, destination_rev=dest_rev) as ec:
+            ec.configure(self.conn)
+            ec.run_migrations()
