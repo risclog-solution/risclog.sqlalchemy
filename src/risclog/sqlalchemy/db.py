@@ -182,7 +182,7 @@ class Database(object):
     def update_database_revision_to_current(self, engine_name=_BLANK):
         def upgrade_revision(ac, head_rev, db_rev):
             if head_rev != db_rev:
-                ac.upgrade(db_rev, head_rev)
+                ac.upgrade(head_rev)
         self._run_in_alembic_context(upgrade_revision, engine_name)
 
     @property
@@ -263,13 +263,13 @@ class AlembicContext(object):
             conn)
         self.script = alembic.script.ScriptDirectory.from_config(self.config)
 
-    def upgrade(self, start_rev, dest_rev):
-        """Upgrade from `start_rev` to `dest_rev`."""
+    def upgrade(self, dest_rev):
+        """Upgrade from current to `dest_rev`."""
         def upgrade_fn(rev, context):
             return self.script._upgrade_revs(dest_rev, rev)
 
         with alembic.environment.EnvironmentContext(
                 self.config, self.script, fn=upgrade_fn,
-                starting_rev=start_rev, destination_rev=dest_rev) as ec:
+                destination_rev=dest_rev) as ec:
             ec.configure(self.conn)
             ec.run_migrations()
