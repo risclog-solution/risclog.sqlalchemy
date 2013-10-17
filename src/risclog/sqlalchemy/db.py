@@ -10,6 +10,7 @@ import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
 import transaction
+import transaction
 import zope.component
 import zope.interface
 import zope.sqlalchemy
@@ -250,6 +251,7 @@ class alembic_context(object):
     def __exit__(self, exc_type, exc_value, tb):
         self.conn.close()
         if exc_type is not None:
+            transaction.doom()
             raise exc_value
 
 
