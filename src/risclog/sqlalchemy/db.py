@@ -250,7 +250,7 @@ class alembic_context(object):
     def __exit__(self, exc_type, exc_value, tb):
         self.conn.close()
         if exc_type is not None:
-            raise exc_type(exc_value)
+            raise exc_value
 
 
 class AlembicContext(object):
