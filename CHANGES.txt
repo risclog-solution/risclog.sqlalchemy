@@ -57,6 +57,9 @@ Change log for risclog.sqlalchemy
 - Declared testing dependency on `plone.testing[test]` since we use
   `plone.testing.zca` which imports that ``test`` extra's dependencies.
 
+- Using yield-fixtures of py.test 2.4, thus requiring at least this
+  version. (#596)
+
 
 0.6 (2013-06-27)
 ================

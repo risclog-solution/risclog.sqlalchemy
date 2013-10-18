@@ -42,11 +42,10 @@ def tearDownDB(db, name=_BLANK):
         db_util._teardown_utility()
 
 
-def database_fixture_factory(request, prefix, name=_BLANK, schema_path=None,
+def database_fixture_factory(prefix, name=_BLANK, schema_path=None,
                              create_all=False, alembic_location=None):
     """Factory creating a py.test fixture for a database.
 
-    request ... request fixture
     prefix  ... str to prefix name of created database
     name ... str name of database to support multiple databases
     schema_path ... load this schema into the created database
@@ -55,25 +54,24 @@ def database_fixture_factory(request, prefix, name=_BLANK, schema_path=None,
 
     Usage example::
 
+        @pytest.yield_fixture
         @pytest.fixture(scope='session')
-        def database(request):
-            return database_fixture_factory(request, 'rl.<prefix>')
+        def database():
+            yield from database_fixture_factory('rl.<prefix>')
 
     """
     def db_factory():
         return gocept.testdb.PostgreSQL(
             prefix=prefix, schema_path=schema_path)
 
-    def dropdb():
-        tearDownDB(db, name)
 
     db = setUpDB(db_factory, name, alembic_location)
     db_util = get_db_util()
     if create_all:
         db_util.create_all(name)
         transaction.commit()
-    request.addfinalizer(dropdb)
-    return db_util
+    yield db_util
+    tearDownDB(db, name)
 
 
 def setUp(managed_tables=None):
@@ -98,23 +96,23 @@ def tearDown():
     db_util.session.close_all()
 
 
-def database_test_livecycle_fixture_factory(request):
+def database_test_livecycle_fixture_factory():
     """Factory creating a py.test fixture for DB livecyle per test.
-
-    request ... request fixture
 
     Usage example::
 
+        @pytest.yield_fixture
         @pytest.fixture(scope='function', autouse=True)
-        def database_test_livecycle(request, database):
-            return database_test_livecycle_fixture_factory(request)
+        def database_test_livecycle(database):
+            yield from database_test_livecycle_fixture_factory()
 
     Caution: You need only one of these fixtures but it should depend on all
     databases you use.
 
     """
     risclog.sqlalchemy.testing.setUp()
-    request.addfinalizer(tearDown)
+    yield
+    tearDown()
 
 
 class TestCase(unittest.TestCase):

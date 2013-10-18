@@ -35,7 +35,7 @@ setup(
             'gocept.testdb',
             'mock',
             'pyramid',
-            'pytest',
+            'pytest >= 2.4',
             'pytest-cache',
         ],
         'python2': ['plone.testing[test]'],
