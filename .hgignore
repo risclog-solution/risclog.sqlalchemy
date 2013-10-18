@@ -3,6 +3,7 @@ syntax: glob
 *.egg-info
 *.pyc
 .Python
+.cache
 .installed.cfg
 __pycache__
 bin

@@ -36,6 +36,7 @@ setup(
             'mock',
             'pyramid',
             'pytest',
+            'pytest-cache',
         ],
         'python2': ['plone.testing[test]'],
         'pyramid': ['pyramid'],
