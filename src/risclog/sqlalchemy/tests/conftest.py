@@ -22,8 +22,8 @@ def database_test_livecycle(request, database_1, database_2):
         request)
 
 
-@pytest.fixture(scope='class')
 def patched_serializer(request):
+@pytest.fixture(scope='function')
     """Patch pyramid serializer to be able to serialize Decimal and Datetime."""
     risclog.sqlalchemy.serializer.patch()
     request.addfinalizer(risclog.sqlalchemy.serializer.unpatch)
