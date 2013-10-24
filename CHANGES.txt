@@ -27,7 +27,9 @@ Change log for risclog.sqlalchemy
 
     + To register a database with the utility use ``register_engine``.
 
-    + ``empty`` now expects to get the engine as first argument.
+    + ``empty`` now expects to get the engine as first argument and allows to
+      cadcade via (``cascade=True``).
+
 
     + ``_verify`` was removed, use ``_verify_engine`` now.
 
