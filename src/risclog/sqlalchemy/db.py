@@ -131,7 +131,7 @@ class Database(object):
         if issubclass(class_, sqlalchemy.ext.declarative.DeferredReflection):
             class_.prepare(self.get_engine(class_._engine_name))
 
-    def create_all(self, engine_name=_BLANK):
+    def create_all(self, engine_name=_BLANK, create_defaults=True):
         """Create all tables etc. for an engine."""
         engine = self._engines[engine_name]
         _ENGINE_CLASS_MAPPING[engine_name].metadata.create_all(
@@ -144,6 +144,13 @@ class Database(object):
                 ac.migration_context._update_current_rev(
                     ac.migration_context.get_current_revision(),
                     ac.script.get_current_head())
+        if create_defaults:
+            self.create_defaults()
+
+    def create_defaults(self):
+        for name, class_ in risclog.sqlalchemy.model.class_registry.items():
+            if hasattr(class_, 'create_defaults'):
+                class_.create_defaults()
 
     def _verify_engine(self, engine):
         # Step 1: Try to identify a testing table

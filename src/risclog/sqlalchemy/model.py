@@ -9,7 +9,6 @@ import zope.interface
 import zope.sqlalchemy
 
 
-
 class ObjectBase(object):
 
     _engine_name = _BLANK  # set another name to use multiple databases
@@ -91,9 +90,12 @@ class EnsureDeferredReflection(sqlalchemy.ext.declarative.DeclarativeMeta):
 # ReflectedObject = declarative_base(cls=ReflectedObjectBase,
 #                                    metaclass=EnsureDeferredReflection)
 
+class_registry = {}
+
 
 def declarative_base(cls, **kw):
     """Create a `declarative_base` from a base Object."""
+    kw['class_registry'] = class_registry
     obj = sqlalchemy.ext.declarative.declarative_base(cls=cls, **kw)
     register_class(obj)
     return obj
