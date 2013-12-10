@@ -47,6 +47,8 @@ Change log for risclog.sqlalchemy
 
     + ``setUp`` now expects a dict or ``None``, see its docstring.
 
+- Provide a way to insert default values for new created models. (#1137)
+
 - Added support for schema migrations with alembic.
 
 - Dropped support for `Python 2.6`.
