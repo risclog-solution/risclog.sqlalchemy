@@ -2,7 +2,13 @@
 Change log for risclog.sqlalchemy
 =================================
 
-1.0 (unreleased)
+1.1 (unreleased)
+================
+
+- Nothing changed yet.
+
+
+1.0 (2013-12-11)
 ================
 
 - CAUTION: Backward incompatible changes to provide multiple database
