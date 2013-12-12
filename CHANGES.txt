@@ -5,7 +5,8 @@ Change log for risclog.sqlalchemy
 1.1 (unreleased)
 ================
 
-- Nothing changed yet.
+- Allow ``.db.Database.empty()`` to not restart sequences. (This can be
+  necassary if the user is not allowed to call `ALTER SEQUENCE`.)
 
 
 1.0 (2013-12-11)

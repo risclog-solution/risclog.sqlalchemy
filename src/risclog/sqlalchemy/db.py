@@ -212,7 +212,8 @@ class Database(object):
     def _teardown_utility(self):
         zope.component.getGlobalSiteManager().unregisterUtility(self)
 
-    def empty(self, engine, table_names=None, cascade=False):
+    def empty(self, engine, table_names=None, cascade=False,
+              restart_sequences=True):
         transaction.abort()
         if table_names is None:
             inspector = sqlalchemy.engine.reflection.Inspector.from_engine(
@@ -222,8 +223,9 @@ class Database(object):
             return
         tables = ', '.join('"%s"' % x for x in table_names)
         self.session.execute(
-            'TRUNCATE {} RESTART IDENTITY {}'.format(
+            'TRUNCATE {} {} {}'.format(
                 tables,
+                'RESTART IDENTITY' if restart_sequences else '',
                 'CASCADE' if cascade else ''),
              bind=engine)
         zope.sqlalchemy.mark_changed(self.session)
