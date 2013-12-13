@@ -52,6 +52,10 @@ def encode(o):
     return json._default_encoder._default_orig(o)
 
 
-json_renderer = pyramid.renderers.JSON()
-for klass, encoder in ENCODERS.items():
-    json_renderer.add_adapter(klass, encoder)
+def json_renderer_factory(*args, **kw):
+    renderer = pyramid.renderers.JSON(*args, **kw)
+    for klass, encoder in ENCODERS.items():
+        renderer.add_adapter(klass, encoder)
+    return renderer
+
+json_renderer = json_renderer_factory()
