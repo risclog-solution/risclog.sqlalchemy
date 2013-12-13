@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-1.1 (unreleased)
+1.1 (2013-12-13)
 ================
 
 - Allow ``.db.Database.empty()`` to not restart sequences. (This can be
