@@ -8,6 +8,9 @@ Change log for risclog.sqlalchemy
 - Allow ``.db.Database.empty()`` to not restart sequences. (This can be
   necassary if the user is not allowed to call `ALTER SEQUENCE`.)
 
+- Create factory for JSON renderer, so it can be customized via arguments.
+  (#1037)
+
 
 1.0 (2013-12-11)
 ================
