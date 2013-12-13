@@ -5,7 +5,7 @@ Change log for risclog.sqlalchemy
 1.2 (unreleased)
 ================
 
-- Nothing changed yet.
+- Fixed setup.py
 
 
 1.1 (2013-12-13)
