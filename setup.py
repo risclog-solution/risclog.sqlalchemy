@@ -17,7 +17,7 @@ def project_path(*names):
 
 setup(
     name='risclog.sqlalchemy',
-    version='1.1.dev0',
+    version='1.3.dev0',
 
     install_requires=[
         'SQLAlchemy',
@@ -58,12 +58,6 @@ Programming Language :: Python :: 3
 Programming Language :: Python :: 3.3
 """[:-1].split('\n'),
     description=__doc__.strip(),
-    long_description='\n\n'.join(open(project_path(name)).read() for name in (
-        'README.txt',
-        'HACKING.txt',
-        'CHANGES.txt',
-    )),
-
     namespace_packages=['risclog'],
     packages=find_packages('src'),
     package_dir={'': 'src'},
