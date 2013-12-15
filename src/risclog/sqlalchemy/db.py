@@ -213,18 +213,22 @@ class Database(object):
         zope.component.getGlobalSiteManager().unregisterUtility(self)
 
     def empty(self, engine, table_names=None, cascade=False,
-              restart_sequences=True):
+              restart_sequences=True,
+              empty_alembic_version=False):
         transaction.abort()
         if table_names is None:
             inspector = sqlalchemy.engine.reflection.Inspector.from_engine(
                 engine)
             table_names = inspector.get_table_names()
-            try:
-                # Don't truncate alembic-version (unless explicitly passed to
-                # this method)
-                table_names.remove('alembic_version')
-            except ValueError:
-                pass
+            if not empty_alembic_version:
+                # Don't truncate alembic-version (unless explicitly asked to).
+                # Ususally it does not make sense to clear it, because TRUNCATE
+                # does not change the schema. Clearing the alembic_version will
+                # cause "confusion and delay".
+                try:
+                    table_names.remove('alembic_version')
+                except ValueError:
+                    pass
         if not table_names:
             return
         tables = ', '.join('"%s"' % x for x in table_names)
