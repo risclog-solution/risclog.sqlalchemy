@@ -219,6 +219,12 @@ class Database(object):
             inspector = sqlalchemy.engine.reflection.Inspector.from_engine(
                 engine)
             table_names = inspector.get_table_names()
+            try:
+                # Don't truncate alembic-version (unless explicitly passed to
+                # this method)
+                table_names.remove('alembic_version')
+            except ValueError:
+                pass
         if not table_names:
             return
         tables = ', '.join('"%s"' % x for x in table_names)
