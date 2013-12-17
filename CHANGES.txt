@@ -8,6 +8,8 @@ Change log for risclog.sqlalchemy
 - Do not truncate `alembic_versions` when emptying entire database (using
   `db.empty(engine)`)
 
+- Fix create_defaults, so it can be used with multiple engines. (#1172)
+
 
 1.2 (2013-12-13)
 ================
