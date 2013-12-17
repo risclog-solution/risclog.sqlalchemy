@@ -145,10 +145,14 @@ class Database(object):
                     ac.migration_context.get_current_revision(),
                     ac.script.get_current_head())
         if create_defaults:
-            self.create_defaults()
+            self.create_defaults(engine_name)
 
-    def create_defaults(self):
+    def create_defaults(self, engine_name):
         for name, class_ in risclog.sqlalchemy.model.class_registry.items():
+            # do not call create_defaults for foreign engines,
+            # since they may not be set up yet
+            if engine_name != getattr(class_, '_engine_name', NotImplemented):
+                continue
             if hasattr(class_, 'create_defaults'):
                 class_.create_defaults()
 
