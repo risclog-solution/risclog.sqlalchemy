@@ -147,7 +147,7 @@ class Database(object):
         if create_defaults:
             self.create_defaults(engine_name)
 
-    def create_defaults(self, engine_name):
+    def create_defaults(self, engine_name=_BLANK):
         for name, class_ in risclog.sqlalchemy.model.class_registry.items():
             # do not call create_defaults for foreign engines,
             # since they may not be set up yet
