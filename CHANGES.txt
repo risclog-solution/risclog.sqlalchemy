@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-1.3 (unreleased)
+1.3 (2013-12-18)
 ================
 
 - Do not truncate `alembic_versions` when emptying entire database (using
