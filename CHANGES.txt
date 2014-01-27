@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-1.4 (unreleased)
+1.4 (2014-01-27)
 ================
 
 - Do not truncate `spatial_ref_sys` when emptying entire database. (#13144)
