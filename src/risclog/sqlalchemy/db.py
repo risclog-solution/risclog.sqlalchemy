@@ -224,6 +224,13 @@ class Database(object):
             inspector = sqlalchemy.engine.reflection.Inspector.from_engine(
                 engine)
             table_names = inspector.get_table_names()
+
+            try:
+                # never truncate the PostGIS table
+                table_names.remove('spatial_ref_sys')
+            except ValueError:
+                pass
+
             if not empty_alembic_version:
                 # Don't truncate alembic-version (unless explicitly asked to).
                 # Ususally it does not make sense to clear it, because TRUNCATE
