@@ -1,3 +1,4 @@
+import pytest
 import unittest
 
 try:
@@ -14,3 +15,9 @@ class ObjectBaseTests(unittest.TestCase):
         model = risclog.sqlalchemy.model.ObjectBase()
         model.__json__({})
         sql_enc.assert_called_once_with(model)
+
+
+def test_create_should_raise_keyerror_on_invalid_attributes():
+    import risclog.sqlalchemy.model
+    with pytest.raises(KeyError):
+        risclog.sqlalchemy.model.ObjectBase.create(foo=27)
