@@ -5,7 +5,8 @@ Change log for risclog.sqlalchemy
 1.5 (unreleased)
 ================
 
-- Nothing changed yet.
+- Adjust test dependency for external projects, so pyramid is not required.
+  (#1458)
 
 
 1.4 (2014-01-27)
