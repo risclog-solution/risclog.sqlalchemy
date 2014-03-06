@@ -33,12 +33,18 @@ setup(
     extras_require={
         'test': [
             'gocept.testdb',
+        ],
+        'self-test': [
             'mock',
             'pyramid',
             'pytest',
         ],
-        'python2': ['plone.testing[test]'],
-        'pyramid': ['pyramid'],
+        'python2': [
+            'plone.testing[test]'
+        ],
+        'pyramid': [
+            'pyramid'
+        ],
     },
 
     entry_points={},
