@@ -2,8 +2,8 @@
 Change log for risclog.sqlalchemy
 =================================
 
-1.6 (unreleased)
-================
+1.5.1 (2014-03-31)
+==================
 
 - Moved the project to bitbucket.org and prepared for public release.
 
