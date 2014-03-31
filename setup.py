@@ -1,9 +1,9 @@
-# Copyright (c) 2013 gocept gmbh & co. kg
+# Copyright (c) 2013-2014 gocept gmbh & co. kg
 # See also LICENSE.txt
 
 # This should be only one line. If it must be multi-line, indent the second
 # line onwards to keep the PKG-INFO file format intact.
-"""Encapsulate sqlalchemy functions for risclog projects.
+"""Encapsulate sqlalchemy modelling infrastructure.
 """
 
 from setuptools import setup, find_packages
@@ -52,9 +52,9 @@ setup(
     author='gocept <mail@gocept.com>',
     author_email='mail@gocept.com',
     license='ZPL 2.1',
-    url='https://redmine.risclog.de/projects/risclog-sqlalchemy/',
+    url='https://bitbucket.org/gocept/risclog.sqlalchemy/',
 
-    keywords='sqlalchemy risclog',
+    keywords='sqlalchemy alembic model infrastructure utility',
     classifiers="""\
 License :: OSI Approved :: Zope Public License
 Programming Language :: Python

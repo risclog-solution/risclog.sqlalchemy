@@ -5,17 +5,14 @@ Developing risclog.sqlalchemy
 :Author:
     `gocept <http://gocept.com/>`_ <mail@gocept.com>
 
-:Online documentation:
-    http://docs.gocept.com/risclog.sqlalchemy/
-
 :PyPI page:
     http://pypi.python.org/pypi/risclog.sqlalchemy/
 
 :Issue tracker:
-    https://projects.gocept.com/projects/risclog-sqlalchemy/
+    https://bitbucket.org/gocept/risclog.sqlalchemy/issues/
 
 :Source code:
-    https://code.gocept.com/hg/public/risclog.sqlalchemy/
+    https://bitbucket.org/gocept/risclog.sqlalchemy/
 
 :Current change log:
-    https://code.gocept.com/hg/public/risclog.sqlalchemy/raw-file/tip/CHANGES.txt
+    https://bitbucket.org/gocept/risclog.sqlalchemy/src/tip/CHANGES.txt
