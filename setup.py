@@ -25,7 +25,7 @@ setup(
         'psycopg2',
         'pytz',
         'setuptools',
-        'zope.component',
+        'zope.component >= 4.0.1',
         'zope.interface',
         'zope.sqlalchemy',
     ],
