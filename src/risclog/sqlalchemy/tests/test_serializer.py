@@ -34,7 +34,7 @@ def test_json_dumps_can_dump_sqlalchemy_objects(test_model):
         [test_model, test_model])
 
 
-def test_json_dumps_can_dump_dates_and_datetimes():
+def test_json_dumps_can_dump_dates_and_datetimes(patched_serializer):
     assert [u'2013-06-20', u'2013-06-20T09:55:12'] == callJSONDumps(
         [datetime.date(2013, 6, 20),
          datetime.datetime(2013, 6, 20, 9, 55, 12)])
@@ -42,5 +42,5 @@ def test_json_dumps_can_dump_dates_and_datetimes():
         datetime.datetime(2013, 6, 20, 9, 55, 12, tzinfo=pytz.utc))
 
 
-def test_json_dumps_can_dump_decimals():
+def test_json_dumps_can_dump_decimals(patched_serializer):
     assert u'12345.67' == callJSONDumps(decimal.Decimal('12345.67'))
