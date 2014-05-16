@@ -5,7 +5,7 @@ Change log for risclog.sqlalchemy
 1.6 (unreleased)
 ================
 
-- Nothing changed yet.
+- Make test setup/teardown a bit more independent from the IDatabase utility.
 
 
 1.5.1 (2014-03-31)
