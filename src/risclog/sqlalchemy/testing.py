@@ -30,14 +30,15 @@ def tearDownDB(db, name=_BLANK):
     transaction.abort()
     # ...sometimes transaction.abort() is not enough, and...
     db_util = get_db_util()
-    db_util.drop_engine(name)
+    if db_util:
+        db_util.drop_engine(name)
     # ...connections that have been checked-out from the pool and not yet
     # returned are not closed by dispose, either, so we have to hunt them
     # down ourselves:
     for conn in sqlalchemy.pool._refs:
         conn.close()
     db.drop()
-    if not db_util.get_all_engines():
+    if db_util and not db_util.get_all_engines():
         # Removed last database so we can drop the utility:
         db_util._teardown_utility()
 
