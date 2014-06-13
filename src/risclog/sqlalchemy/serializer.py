@@ -3,7 +3,7 @@ import datetime
 import decimal
 import json
 import logging
-import pyramid.renderers
+
 import sqlalchemy.orm
 
 
@@ -51,11 +51,17 @@ def encode(o):
             return encoder(o)
     return json._default_encoder._default_orig(o)
 
+try:
+    import pyramid.renderers
+    has_pyramid = True
+except ImportError:
+    has_pyramid = False
 
-def json_renderer_factory(*args, **kw):
-    renderer = pyramid.renderers.JSON(*args, **kw)
-    for klass, encoder in ENCODERS.items():
-        renderer.add_adapter(klass, encoder)
-    return renderer
+if has_pyramid:
+    def json_renderer_factory(*args, **kw):
+        renderer = pyramid.renderers.JSON(*args, **kw)
+        for klass, encoder in ENCODERS.items():
+            renderer.add_adapter(klass, encoder)
+        return renderer
 
-json_renderer = json_renderer_factory()
+    json_renderer = json_renderer_factory()
