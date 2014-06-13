@@ -6,6 +6,7 @@ Change log for risclog.sqlalchemy
 ================
 
 - Make test setup/teardown a bit more independent from the IDatabase utility.
+- Made pyramid dependent code optional, because it is an optional requirement.
 
 
 1.5.1 (2014-03-31)
