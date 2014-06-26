@@ -5,7 +5,8 @@ Change log for risclog.sqlalchemy
 1.7 (unreleased)
 ================
 
-- Nothing changed yet.
+- Have ``.model.Object.create`` use the ``**kw`` constructor instead of
+  performing setattr itself.
 
 
 1.6 (2014-06-23)

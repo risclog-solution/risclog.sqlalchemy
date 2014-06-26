@@ -19,5 +19,7 @@ class ObjectBaseTests(unittest.TestCase):
 
 def test_create_should_raise_keyerror_on_invalid_attributes():
     import risclog.sqlalchemy.model
-    with pytest.raises(KeyError):
-        risclog.sqlalchemy.model.ObjectBase.create(foo=27)
+    base = risclog.sqlalchemy.model.declarative_base(
+        risclog.sqlalchemy.model.ObjectBase)
+    with pytest.raises(TypeError):
+        base.create(foo=27)

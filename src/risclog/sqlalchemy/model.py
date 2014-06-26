@@ -20,11 +20,7 @@ class ObjectBase(object):
     @classmethod
     def create(cls, **kw):
         """Canonical way to create an object of this class."""
-        obj = cls()
-        for key, value in kw.items():
-            if key not in dir(cls):
-                raise KeyError('%r is not known on the class. Typo?' % key)
-            setattr(obj, key, value)
+        obj = cls(**kw)
         obj.persist()
         return obj
 
