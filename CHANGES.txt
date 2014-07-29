@@ -8,6 +8,8 @@ Change log for risclog.sqlalchemy
 - Have ``.model.Object.create`` use the ``**kw`` constructor instead of
   performing setattr itself.
 
+- Made commit in db.empty optional.
+
 
 1.6 (2014-06-23)
 ================

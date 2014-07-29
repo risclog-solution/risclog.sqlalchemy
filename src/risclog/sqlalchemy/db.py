@@ -218,7 +218,7 @@ class Database(object):
 
     def empty(self, engine, table_names=None, cascade=False,
               restart_sequences=True,
-              empty_alembic_version=False):
+              empty_alembic_version=False, commit=True):
         transaction.abort()
         if table_names is None:
             inspector = sqlalchemy.engine.reflection.Inspector.from_engine(
@@ -248,9 +248,10 @@ class Database(object):
                 tables,
                 'RESTART IDENTITY' if restart_sequences else '',
                 'CASCADE' if cascade else ''),
-             bind=engine)
+            bind=engine)
         zope.sqlalchemy.mark_changed(self.session)
-        transaction.commit()
+        if commit:
+            transaction.commit()
 
     def _run_in_alembic_context(self, func, engine_name=_BLANK):
         """Run a function in `alembic_context`.
