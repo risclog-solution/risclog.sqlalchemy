@@ -10,7 +10,6 @@ import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
 import transaction
-import transaction
 import zope.component
 import zope.interface
 import zope.sqlalchemy
