@@ -160,7 +160,7 @@ class Database(object):
         conn = engine.connect()
         try:
             conn.execute("SELECT * FROM tmp_functest")
-        except sqlalchemy.exc.ProgrammingError:
+        except sqlalchemy.exc.DatabaseError:
             db_is_testing = False
         else:
             db_is_testing = True
