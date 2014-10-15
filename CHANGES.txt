@@ -5,7 +5,7 @@ Change log for risclog.sqlalchemy
 1.8 (unreleased)
 ================
 
-- Nothing changed yet.
+- Fix bug in testing mode detection so it works with sqlite, too.
 
 
 1.7 (2014-07-29)
