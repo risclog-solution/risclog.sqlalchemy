@@ -5,7 +5,8 @@ Change log for risclog.sqlalchemy
 1.8 (unreleased)
 ================
 
-- Nothing changed yet.
+- Set maximum supported version numbers of ``alembic`` and ``SQLALchemy``
+  in `setup.py`
 
 
 1.7.1 (2014-10-15)

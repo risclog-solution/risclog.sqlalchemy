@@ -1,4 +1,4 @@
-# Copyright (c) 2013-2014 gocept gmbh & co. kg
+# Copyright (c) 2013-2015 gocept gmbh & co. kg
 # See also LICENSE.txt
 
 # This should be only one line. If it must be multi-line, indent the second
@@ -20,8 +20,8 @@ setup(
     version='1.8.dev0',
 
     install_requires=[
-        'SQLAlchemy',
-        'alembic',
+        'SQLAlchemy < 1.0.dev0',
+        'alembic < 0.7.dev0',
         'psycopg2',
         'pytz',
         'setuptools',
