@@ -62,6 +62,8 @@ Programming Language :: Python :: 2
 Programming Language :: Python :: 2.7
 Programming Language :: Python :: 3
 Programming Language :: Python :: 3.3
+Programming Language :: Python :: 3.4
+Programming Language :: Python :: 3.5
 """[:-1].split('\n'),
     description=__doc__.strip(),
     namespace_packages=['risclog'],
