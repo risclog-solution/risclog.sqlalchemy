@@ -5,6 +5,8 @@ Change log for risclog.sqlalchemy
 1.8 (unreleased)
 ================
 
+- Officially supporting Python 3.3 up to 3.5.
+
 - Set maximum supported version numbers of ``alembic`` and ``SQLALchemy``
   in `setup.py`
 
