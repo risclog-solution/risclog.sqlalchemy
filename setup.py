@@ -17,7 +17,7 @@ def project_path(*names):
 
 setup(
     name='risclog.sqlalchemy',
-    version='1.8.dev0',
+    version='1.8',
 
     install_requires=[
         'SQLAlchemy < 1.0.dev0',
