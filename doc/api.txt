@@ -1,8 +1,250 @@
-=============
 API Reference
 =============
 
-.. autosummary::
-    :toctree: ./_api/
+Database
+--------
 
-..  risclog.sqlalchemy.foo
+Setting up the database
++++++++++++++++++++++++
+
+The get or create the database utility, simply call::
+
+    db = risclog.sqlalchemy.db.get_database()
+    db.register_engine('postgresql://user:@localhost/dbname')
+
+This creates an `risclog.sqlalchemy.interfaces.IDatabase` utility and registers
+it at the ``Zope Component Architecture`` (ZCA). It is able to coordinate the
+access to multiple databases::
+
+    db = zope.component.getUtility(
+        risclog.sqlalchemy.interfaces.IDatabase)
+    db.register_engine('postgresql://user:@localhost/otherdb',
+                       name='otherdb')
+
+.. function:: risclog.sqlalchemy.db.get_database(testing=False)
+
+    Also takes an optional ``testing`` parameter and ensures, that the testing
+    status matches :attr:`testing`.
+
+
+DataBase API
+++++++++++++
+
+.. class:: risclog.sqlalchemy.db.DataBase(testing=False)
+
+    Initialize the database in ``testing`` mode.
+
+    .. method:: register_engine(dsn, engine_args={}, name=_BLANK)
+
+        Register a new engine with the database utility.
+
+    .. method:: get_engine(name=_BLANK)
+
+        Get a registered engine by its name.
+
+    .. method:: get_all_engines()
+
+        Get all registered engines.
+
+    .. method:: drop_engine(name=_BLANK)
+
+        Disposes an engine. It gets unregistered from the database utility.
+
+    .. method:: create_all(engine_name=_BLANK, create_defaults=True)
+
+        Create all tables etc. for an engine.
+
+    .. method:: setup_utility()
+
+        Register the database as a ZCA utility.
+
+        Also verifies that the testing status of the database and this utility
+        match.
+
+    .. method:: query()
+
+        Query the session.
+
+    .. method:: empty(engine, table_names=None)
+
+        Truncate any tables passed, or all tables found in the engine.
+
+    .. attribute:: session
+
+        Return the database session.
+
+    .. attribute:: testing
+
+        Marker if database is in testing mode or in production mode.
+
+Database migrations with alemic
++++++++++++++++++++++++++++++++
+
+If you are using alemic to migrate your database, you can pass the location of
+you alembic setup to ``register_engine``::
+
+    db = risclog.sqlalchemy.db.get_database()
+    db.register_engine('postgresql://user:@localhost/dbname',
+                    alembic_location='my.package:alembic')
+
+The database utility ensures, that your database revision matches the current
+head and refuses initialization if your database is not migrated.
+
+
+ObjectBase - the base for your models
+-------------------------------------
+
+Creating a model with risclog.sqlalchemy
+++++++++++++++++++++++++++++++++++++++++
+
+Each table in your database is mapped to a python class (the model). There are
+two ways you can create those models: relected and non reflected. Reflected
+models are initialized on the database, so you do not need to crate the tables
+via sql commands. Non reflected models expect the tables to be present on the
+database.
+
+You create a non reflected ObjectBase for your models via::
+
+    import risclog.sqlalchemy.model
+
+    Object = risclog.sqlalchemy.model.declarative_base(
+        risclog.sqlalchemy.model.ObjectBase)
+
+Reflected Objects are created with the ``ReflectedObjectBase``::
+
+    Object = risclog.sqlalchemy.model.declarative_base(
+        risclog.sqlalchemy.model.ReflectedObjectBase)
+
+If you need to create your own ReflectedObject as declarative_base you may
+call::
+
+    Object = risclog.sqlalchemy.model.declarative_base(
+        cls=risclog.sqlalchemy.model.ReflectedObjectBase,
+        metaclass=risclog.sqlalchemy.model.EnsureDeferredReflection)
+
+If you want to use `create_defaults` on a model, you must enable you own
+``class_registry`` by calling::
+
+    class_registry = {}
+    Object = risclog.sqlalchemy.model.declarative_base(
+        risclog.sqlalchemy.model.ObjectBase,
+        class_registry=class_registry)
+
+Now you can define your models with one of the above Objects::
+
+    from sqlalchemy import Column, String
+
+    class MyModel(Object):
+        name = Column(String(30))
+
+
+ObjectBase API
+++++++++++++++
+
+Your models created with ``risclog.sqlalchemy`` have the following attributes
+and methods.
+
+.. class:: risclog.sqlalchemy.model.ObjectBase()
+
+    .. attribute:: _engine_name
+
+        Change this if you want to use multiple databases. This is the name you
+        specified on engine registration (:func:`register_engine`).
+
+        Default value: ``_BLANK``
+
+    .. attribute:: __tablename__
+
+        Change this if your table is different from the models class name.
+
+    .. classmethod:: create(cls)
+
+        Canonical way to create an object of your model::
+
+            mymodel = MyModel.create(name='foo')
+
+    .. classmethod:: find_or_create(kwargs)
+
+        Return an instance of your model if found by kwargs or create a new one from
+        kwargs::
+
+            mymodel = MyModel.find_or_create(name='foo')
+
+    .. classmethod:: query()
+
+        Return a query instance for your model::
+
+            mymodel = MyModel.query().filter(MyModel.name == 'foo').one()
+
+    .. method:: __json__(request)
+
+        Returns json serializable representation of this object::
+
+            import json
+            json.dumps(model)
+            '{"id": 1, "name": "foo"}'
+
+    .. method:: persist()
+
+        Add make the newly created object known to the database::
+
+            mymodel.persist()
+
+    .. method:: delete()
+
+        Remove the object from the database::
+
+            mymodel.delete()
+
+
+Testing
+-------
+
+``risclog.sqlalchemy`` needs ``gocept.testdb`` for the basic database handling
+in testing environments.
+
+Testing with ``plone.testing``
+++++++++++++++++++++++++++++++
+
+``risclog.sqlalchemy`` provides a DatabaseLayer for your testing environment.
+You should define your own via::
+
+    import gocept.testdb
+    import plone.testing
+    import risclog.kravagportal.model
+    import risclog.sqlalchemy.testlayer
+
+    class DatabaseLayer(plone.testing.Layer):
+
+        defaultBases = [
+            risclog.sqlalchemy.testlayer.DatabaseLayer(
+                risclog.kravagportal.model.ENGINE_NAME,
+                gocept.testdb.PostgreSQL)]
+
+    LAYER = DatabaseLayer()
+
+Using this ;ayer in your tests will create a testing database with
+``gocept.testdb`` and allow you to create your test data via
+``mymodel.create()``.
+
+Testing with ``py.test``
+++++++++++++++++++++++++
+
+If you like to test using pytest, there are some database fixtures that you can
+use for your testing configuration. A minimum contest setup might look like::
+
+    import pytest
+    import risclog.sqlalchemy.testing
+
+    @pytest.fixture(scope='session')
+    def database_session(request):
+        """Set up and tear down the database."""
+        return risclog.sqlalchemy.testing.database_fixture_factory(
+            request, 'my.package', create_all=True)
+
+    @pytest.fixture(scope='function')
+    def database(request, database_session):
+        """Perform database setup and tear down for test function."""
+        (risclog.sqlalchemy.testing.
+         database_test_livecycle_fixture_factory(request))
+        return database_session

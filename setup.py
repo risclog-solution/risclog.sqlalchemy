@@ -77,6 +77,12 @@ Topic :: Software Development :: Libraries
 Topic :: Software Development :: Libraries :: Python Modules
 """[:-1].split('\n'),
     description=__doc__.strip(),
+    long_description=(
+        open('README.txt').read() +
+        '\n\n' +
+        open('HACKING.txt').read() +
+        '\n\n' +
+        open('CHANGES.txt').read()),
     namespace_packages=['risclog'],
     packages=find_packages('src'),
     package_dir={'': 'src'},
