@@ -1,7 +1,11 @@
-===================================
-The risclog.sqlalchemy distribution
-===================================
+==================
+risclog.sqlalchemy
+==================
 
-Encapsulate sqlalchemy modelling infrastructure.
+risclog.sqlalchemy encapsulates `sqlalchemy`_ modelling infrastructure. It
+eases the setup of (multi-)database environments and the usage of sqlalchemy
+models by providing often used functionality on special classes.
 
 This package is compatible with Python version 2.7, 3.3 up to 3.5
+
+.. _`sqlalchemy`: http://www.sqlalchemy.org
