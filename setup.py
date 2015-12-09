@@ -17,7 +17,7 @@ setup(
     version='2.0.dev0',
 
     install_requires=[
-        'SQLAlchemy',
+        'SQLAlchemy >= 1.0',
         'alembic >= 0.7',
         'psycopg2',
         'pytz',
