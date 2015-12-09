@@ -2,7 +2,6 @@ from zope.component._compat import _BLANK
 import alembic.config
 import alembic.environment
 import alembic.migration
-import alembic.op
 import alembic.script
 import os
 import risclog.sqlalchemy.interfaces
