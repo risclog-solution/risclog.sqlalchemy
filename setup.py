@@ -1,6 +1,3 @@
-# Copyright (c) 2013-2015 gocept gmbh & co. kg
-# See also LICENSE.txt
-
 # This should be only one line. If it must be multi-line, indent the second
 # line onwards to keep the PKG-INFO file format intact.
 """Encapsulate sqlalchemy modelling infrastructure.
@@ -17,11 +14,11 @@ def project_path(*names):
 
 setup(
     name='risclog.sqlalchemy',
-    version='1.9.dev0',
+    version='2.0.dev0',
 
     install_requires=[
         'SQLAlchemy < 1.0.dev0',
-        'alembic < 0.7.dev0',
+        'alembic >= 0.7',
         'psycopg2',
         'pytz',
         'setuptools',

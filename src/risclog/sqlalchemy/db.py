@@ -139,8 +139,8 @@ class Database(object):
         location = engine['alembic_location']
         if location:
             with alembic_context(engine['engine'], location) as ac:
-                ac.migration_context._update_current_rev(
-                    ac.migration_context.get_current_revision(),
+                ac.migration_context.stamp(
+                    ac.script,
                     ac.script.get_current_head())
         if create_defaults:
             self.create_defaults(engine_name)
