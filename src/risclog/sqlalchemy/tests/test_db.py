@@ -108,7 +108,7 @@ def test_assert_db_rev_raises_if_mismatch(database_1):
         database_1.assert_database_revision_is_current('db1')
 
 
-def test_session_can_be_bound_to_spefic_database(
+def test_database_is_detected_automatically_among_several(
         database_1, database_2, request):
     from ..db import get_database
     from ..model import ObjectBase, declarative_base
@@ -132,11 +132,10 @@ def test_session_can_be_bound_to_spefic_database(
     database_1.create_all('db1')
 
     db = get_database(testing=True)
-    # Using a clause (`count` in this case) unbound leads to an exception:
-    with pytest.raises(RuntimeError):
-        db.session.query(Model_1).count()
-    # Using a bound session leads to a result:
-    assert db.session.using_bind('db1').query(Model_1).count() == 0
+    # It used to be necessary to bind the session to the database to be
+    # queried if more than one database was being used. This is no longer the
+    # case as of SQLAlchemy 1.0.
+    assert db.session.query(Model_1).count() == 0
 
 
 def test_create_all_marks_alembic_current(database_1, request):

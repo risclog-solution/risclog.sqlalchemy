@@ -5,6 +5,8 @@ Change log for risclog.sqlalchemy
 2.0 (unreleased)
 ================
 
+- Removed ``RoutingSession.using_bind``, require SQLAlchemy >= 1.0. (#13968)
+
 - Updated API calls to alembic, require alembic >= 0.7. (#13968)
 
 - Added documentation. (#13952)
