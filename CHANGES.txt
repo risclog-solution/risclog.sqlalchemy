@@ -2,8 +2,10 @@
 Change log for risclog.sqlalchemy
 =================================
 
-1.9 (unreleased)
+2.0 (unreleased)
 ================
+
+- Updated API calls to alembic, require alembic >= 0.7. (#13968)
 
 - Added documentation. (#13952)
 
