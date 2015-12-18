@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-2.0 (unreleased)
+2.0 (2015-12-18)
 ================
 
 - Removed ``RoutingSession.using_bind``, require SQLAlchemy >= 1.0. (#13968)
