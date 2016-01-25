@@ -19,7 +19,6 @@ setup(
     install_requires=[
         'SQLAlchemy >= 1.0',
         'alembic >= 0.7',
-        'psycopg2',
         'pytz',
         'setuptools',
         'zope.component >= 4.0.1',
