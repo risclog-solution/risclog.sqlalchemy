@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-2.2 (unreleased)
+2.2 (2017-01-12)
 ================
 
 - Support Python 3.6 and PyPy3.
