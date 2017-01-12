@@ -74,15 +74,15 @@ Topic :: Software Development :: Libraries :: Python Modules
 """[:-1].split('\n'),
     description=__doc__.strip(),
     long_description=(
-        open('README.txt').read() +
+        open('README.rst').read() +
         '\n\n' +
-        open('HACKING.txt').read() +
+        open('HACKING.rst').read() +
         '\n\n' +
-        open('CHANGES.txt').read()),
+        open('CHANGES.rst').read()),
     namespace_packages=['risclog'],
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
-    data_files=[('', glob.glob(project_path('*.txt')))],
+    data_files=[('', glob.glob(project_path('*.rst')))],
     zip_safe=False,
 )
