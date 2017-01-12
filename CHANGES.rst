@@ -5,7 +5,7 @@ Change log for risclog.sqlalchemy
 2.2 (unreleased)
 ================
 
-- Nothing changed yet.
+- Support Python 3.6.
 
 
 2.1 (2016-01-25)
