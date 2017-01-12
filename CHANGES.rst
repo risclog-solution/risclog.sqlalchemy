@@ -7,6 +7,8 @@ Change log for risclog.sqlalchemy
 
 - Support Python 3.6.
 
+- Fix `setup.py` to no longer use absolute paths.
+
 
 2.1 (2016-01-25)
 ================
