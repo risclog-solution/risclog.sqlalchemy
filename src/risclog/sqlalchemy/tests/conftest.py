@@ -30,24 +30,35 @@ def patched_serializer(request):
 
 
 @pytest.fixture(scope='function')
-def test_model(request):
-    """Create testmodel for test_serializer."""
-    from sqlalchemy import Column, Text
-    import risclog.sqlalchemy.model
+def test_model_factory(request):
+    """Factory to create a test model for an engine."""
+    class NonLocal:
+        """Trick to get something like the nonlocal keyword of Python 3 in Py2.
 
-    class TestObject(risclog.sqlalchemy.model.ObjectBase):
-        _engine_name = 'test_serializer'
+        Source: http://stackoverflow.com/questions/8447947/#comment-32788952
+        """
 
-    Object = risclog.sqlalchemy.model.declarative_base(TestObject)
+    def factory(engine_name):
+        from sqlalchemy import Column, Text
+        import risclog.sqlalchemy.db
+        import risclog.sqlalchemy.model
 
-    class ExampleModel(Object):
-        __tablename__ = 'foo'
-        foo = Column(Text, primary_key=True)
+        class TestObject(risclog.sqlalchemy.model.ObjectBase):
+            _engine_name = engine_name
+
+        NonLocal.Object = risclog.sqlalchemy.model.declarative_base(TestObject)
+
+        class ExampleModel(NonLocal.Object):
+            __tablename__ = 'foo'
+            foo = Column(Text, primary_key=True)
+
+        test_object = ExampleModel()
+        test_object.foo = u'bar'
+        return test_object
 
     def unregister_model():
-        risclog.sqlalchemy.db.unregister_class(Object)
+        risclog.sqlalchemy.db.unregister_class(NonLocal.Object)
 
-    test_object = ExampleModel()
-    test_object.foo = u'bar'
     request.addfinalizer(unregister_model)
-    return test_object
+
+    return factory
