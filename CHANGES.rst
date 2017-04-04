@@ -5,7 +5,8 @@ Change log for risclog.sqlalchemy
 2.3 (unreleased)
 ================
 
-- Nothing changed yet.
+- Add fixture `.fixtures.database__selenium_testing` to switch SQLAlchemy
+  session handling to into the same way the live server does it.
 
 
 2.2 (2017-01-12)
