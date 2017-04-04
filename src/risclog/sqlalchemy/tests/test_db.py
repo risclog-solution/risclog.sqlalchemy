@@ -166,4 +166,3 @@ def test_update_database_revision_to_current(database_1, request):
         database_1.assert_database_revision_is_current('db1')
     database_1.update_database_revision_to_current('db1')
     database_1.assert_database_revision_is_current('db1')
-
