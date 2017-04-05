@@ -6,11 +6,6 @@ import pytz
 import risclog.sqlalchemy.serializer
 
 
-@pytest.fixture('function')
-def test_model(test_model_factory):
-    return test_model_factory('test_serializer')
-
-
 def test_returns_json_serializable_data_of_sqlalchemy_object(test_model):
     result = risclog.sqlalchemy.serializer.sqlalchemy_encode(test_model)
     assert {'foo': u'bar'} == result
