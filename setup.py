@@ -9,7 +9,7 @@ import glob
 
 setup(
     name='risclog.sqlalchemy',
-    version='2.3.dev0',
+    version='2.3',
 
     install_requires=[
         'SQLAlchemy >= 1.0',
