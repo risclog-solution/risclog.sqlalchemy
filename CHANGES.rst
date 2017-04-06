@@ -5,7 +5,7 @@ Change log for risclog.sqlalchemy
 2.3 (unreleased)
 ================
 
-- Add fixture `.fixtures.database__selenium_testing` to switch SQLAlchemy
+- Add the fixture ``.fixtures.database__selenium_testing`` to switch SQLAlchemy
   session handling to into the same way the live server does it. Using this
   fixture leads to `DetachedInstanceError` exceptions when using a database
   object after the commit. It has to be fetched again from the database.
