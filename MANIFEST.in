@@ -1,0 +1,29 @@
+include *.rst
+
+include *.py
+exclude bootstrap.py
+
+include .coveragerc
+exclude .coveragerc
+
+include buildout.cfg
+exclude buildout.cfg
+
+include pytest.ini
+exclude pytest.ini
+
+include tox.ini
+exclude tox.ini
+
+include .hgtags
+exclude .hgtags
+
+include .hgignore
+exclude .hgignore
+
+exclude MANIFEST.in
+
+recursive-include doc *.py
+recursive-include doc *.txt
+recursive-include src *.mako
+recursive-include src *.py

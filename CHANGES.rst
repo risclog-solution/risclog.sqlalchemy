@@ -10,6 +10,7 @@ Change log for risclog.sqlalchemy
   fixture leads to `DetachedInstanceError` exceptions when using a database
   object after the commit. It has to be fetched again from the database.
 
+- Omit files from sdist which are related to buildout, testing or mercurial.
 
 2.2 (2017-01-12)
 ================
