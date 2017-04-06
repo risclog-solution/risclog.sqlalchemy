@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-2.3 (unreleased)
+2.3 (2017-04-06)
 ================
 
 - Add the fixture ``.fixtures.database__selenium_testing`` to switch SQLAlchemy
