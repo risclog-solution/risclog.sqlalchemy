@@ -22,7 +22,7 @@ Change log for risclog.sqlalchemy
 2.1 (2016-01-25)
 ================
 
-- Add compatability to `pypy`.
+- Add compatibility to `pypy`.
 
   Also removed explicit dependency to `psycopg2` as it's a PostgreSQL specific
   dependency and not compatible with pypy. You will need `psycopg2cffi` in
