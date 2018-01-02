@@ -123,7 +123,7 @@ def test_database_is_detected_automatically_among_several(
 
     class ObjectBase_2(ObjectBase):
         _engine_name = 'db2'
-    Base_2 = declarative_base(ObjectBase_2)
+    declarative_base(ObjectBase_2)
 
     def tearDown():
         risclog.sqlalchemy.db.unregister_class(Model_1)
@@ -136,6 +136,13 @@ def test_database_is_detected_automatically_among_several(
     # queried if more than one database was being used. This is no longer the
     # case as of SQLAlchemy 1.0.
     assert db.session.query(Model_1).count() == 0
+
+    # When using session.execute, a manual bind is necessary though
+    with pytest.raises(RuntimeError):
+        assert db.session.execute('SELECT count(*) FROM model_1').fetchall()
+    # Using a bound session leads to a result:
+    assert db.session.using_bind('db1').execute(
+        'SELECT count(*) FROM model_1').fetchall() == [(0,)]
 
 
 def test_create_all_marks_alembic_current(database_1, request):
