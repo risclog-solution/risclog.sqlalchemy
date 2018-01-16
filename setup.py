@@ -16,7 +16,7 @@ setup(
         'alembic >= 0.7',
         'pytz',
         'setuptools',
-        'zope.component >= 4.0.1',
+        'zope.component >= 4.0.1, < 4.3',
         'zope.interface',
         'zope.sqlalchemy',
     ],
