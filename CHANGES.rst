@@ -10,8 +10,8 @@ Change log for risclog.sqlalchemy
 - Reintroduce `RoutingSession.using_bind` as it is needed for executing queries
   in multi database environments. It was removed in version `2.0`.
 
-- Pin to `zope.component < 4.3` for now as we are using a private variable from
-  this package which has been removed lately.
+- Pin to `zope.component < 4.4.1` for now as we are using a private variable
+  from this package which has been removed lately.
 
 
 2.3 (2017-04-06)
