@@ -7,8 +7,8 @@ Change log for risclog.sqlalchemy
 
 - Drop support for Python 3.3.
 
-- Reintroduce `RoutingSession.using_bind` as it is needed for executing queries in multi database
-  environments. It was removed in version `2.0`.
+- Reintroduce `RoutingSession.using_bind` as it is needed for executing queries
+  in multi database environments. It was removed in version `2.0`.
 
 
 2.3 (2017-04-06)
