@@ -7,6 +7,8 @@ Change log for risclog.sqlalchemy
 
 - Add support for Python 3.7.
 
+- Migrate to Github.
+
 
 3.0 (2018-01-16)
 ================

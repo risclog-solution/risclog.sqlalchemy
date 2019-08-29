@@ -1,0 +1,14 @@
+language: python
+dist: xenial
+python:
+- 2.7
+- 3.6
+- 3.7
+install: pip install tox-travis
+script: tox
+after_success: 
+cache:
+  pip: true
+notifications:
+  webhooks:
+    secure: TOtjF1uLlQ+aE+RzH6tKD0qLE5L/mhZl1NXddajnS/8GPMIv98tCokpXV1uCQtlV7ekiWUCpSH9oiOd+izt0wv4vX5wCJLISNRIOkfZYVB/kr7Lrz+2Z587X4sfB/ZAbHkWVAgihzX1kEWbFBIWNR+lpwNKcJS+oZyNN/VcDNPY/d5Y2yrSK8vZTkI98CGDB233z5rvXHcr4BHb9Wlr5jdPJRymMlk7eOCGeeqPBwz62kalPLOwfGkx/ri/WeU3n6ikq7BcIV/raC+wbvrTdeOSgX7sRg7ZRD5MhTg6Tx7Msue9OqR9xFaaAa5C9n5BLvXFhtk8eTA+Jl4kiMs2mJaU1IC0yY4LhZ2wevdigfX7f29wWK3xpPI8kItNBxBa1uj4+9JZfEqBo6lUX8qKj4c68TX4xEM5WFxmT1P7+CnOT4DOElC9/XSmKDvNATGR3AruFpJ6btlcddW3no0VX+o0ODZQkBCYLGRLUDiSUPcB/ZxZka09was8mX4Xna9qdLOrDrq4PDYFVIl0616vdSN80gJ9e38qNFQ/ZjXBdQ0H9q6WC9HWz2SJCSlNQ+whVbgSgV01onqolY24PAaVGDqYqbd/6PP/oklvsFphHUq/H0k+az6BreDGJ9i6z77myVTPBhwL0Gl7u46LSFERb7vndpWBer7T7oGAuQk4JThM=

@@ -43,7 +43,7 @@ setup(
     author='gocept <mail@gocept.com>',
     author_email='mail@gocept.com',
     license='ZPL 2.1',
-    url='https://bitbucket.org/gocept/risclog.sqlalchemy/',
+    url='https://github.com/gocept/risclog.sqlalchemy',
 
     keywords='sqlalchemy alembic model infrastructure utility',
     classifiers="""\

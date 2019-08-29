@@ -12,13 +12,13 @@ Developing risclog.sqlalchemy
     http://pypi.python.org/pypi/risclog.sqlalchemy/
 
 :Issue tracker:
-    https://bitbucket.org/gocept/risclog.sqlalchemy/issues/
+    https://github.com/gocept/risclog.sqlalchemy/issues/
 
 :Source code:
-    https://bitbucket.org/gocept/risclog.sqlalchemy/
+    https://github.com/gocept/risclog.sqlalchemy
 
 :Current change log:
-    https://bitbucket.org/gocept/risclog.sqlalchemy/src/tip/CHANGES.txt
+    https://github.com/gocept/risclog.sqlalchemy/blob/master/CHANGES.rst
 
 Buildout configuration
 ======================
