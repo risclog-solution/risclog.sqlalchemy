@@ -19,6 +19,7 @@ setup(
         'zope.component >= 4.0.1, <= 4.4.1',
         'zope.interface',
         'zope.sqlalchemy',
+        'psycopg2-binary',
     ],
 
     extras_require={
