@@ -9,6 +9,8 @@ Change log for risclog.sqlalchemy
 
 - Migrate to Github.
 
+- Add compatability to `zope.sqlalchemy` >= 1.2.
+
 
 3.0 (2018-01-16)
 ================

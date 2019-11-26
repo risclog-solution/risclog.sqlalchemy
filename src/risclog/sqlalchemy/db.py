@@ -92,10 +92,8 @@ class Database(object):
         self._engines = {}
         self.testing = testing
         self.session_factory = sqlalchemy.orm.scoped_session(
-            sqlalchemy.orm.sessionmaker(
-                class_=RoutingSession,
-                extension=zope.sqlalchemy.ZopeTransactionExtension(
-                    keep_session=testing)))
+            sqlalchemy.orm.sessionmaker(class_=RoutingSession))
+        zope.sqlalchemy.register(self.session_factory, keep_session=testing)
         self._setup_utility()
 
     def register_engine(self, dsn, engine_args={}, name=_BLANK,
@@ -119,6 +117,8 @@ class Database(object):
         return [x['engine'] for x in self._engines.values()]
 
     def drop_engine(self, name=_BLANK):
+        if name not in self._engines:
+            return
         engine = self.get_engine(name)
         engine.dispose()
         del self._engines[name]
