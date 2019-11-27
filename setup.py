@@ -25,6 +25,8 @@ setup(
     extras_require={
         'test': [
             'gocept.testdb',
+            'pytest',
+            'pytest-cov',
         ],
         'self-test': [
             'mock',

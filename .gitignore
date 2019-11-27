@@ -25,3 +25,5 @@ doc
 coverage.xml
 venv
 pip-selfcheck.json
+.pytest_cache/
+report.xml
