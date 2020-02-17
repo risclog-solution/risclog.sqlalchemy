@@ -2,12 +2,21 @@
 Change log for risclog.sqlalchemy
 =================================
 
-3.1 (unreleased)
+4.0 (unreleased)
 ================
 
-- Add support for Python 3.7.
+Backward incompatible changes
+-----------------------------
+
+- Add support for ``zope.sqlalchemy >= 1.3`` by requiring at least this version.
+  (Older versions only supported ``zope.sqlalchemy <= 1.2``.)
 
 - Drop support for PyPy, PyPy3, Python 3.4 and 3.5.
+
+Other changes
+-------------
+
+- Add support for Python 3.7.
 
 - Migrate to Github.
 
