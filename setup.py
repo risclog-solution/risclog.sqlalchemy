@@ -9,7 +9,7 @@ import glob
 
 setup(
     name='risclog.sqlalchemy',
-    version='3.1.dev0',
+    version='4.0.dev0',
 
     install_requires=[
         'SQLAlchemy >= 1.0',
@@ -18,7 +18,7 @@ setup(
         'setuptools',
         'zope.component >= 4.0.1, <= 4.4.1',
         'zope.interface',
-        'zope.sqlalchemy < 1.2',
+        'zope.sqlalchemy >= 1.3',
     ],
 
     extras_require={

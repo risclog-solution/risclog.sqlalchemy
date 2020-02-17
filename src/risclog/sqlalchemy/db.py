@@ -92,10 +92,9 @@ class Database(object):
         self._engines = {}
         self.testing = testing
         self.session_factory = sqlalchemy.orm.scoped_session(
-            sqlalchemy.orm.sessionmaker(
-                class_=RoutingSession,
-                extension=zope.sqlalchemy.ZopeTransactionExtension(
-                    keep_session=testing)))
+            sqlalchemy.orm.sessionmaker(class_=RoutingSession))
+        self.zope_transaction_events = zope.sqlalchemy.register(
+            self.session_factory, keep_session=testing)
         self._setup_utility()
 
     def register_engine(self, dsn, engine_args={}, name=_BLANK,
