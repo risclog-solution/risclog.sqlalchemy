@@ -2,6 +2,7 @@ from zope.component._compat import _BLANK
 import gocept.testdb
 import risclog.sqlalchemy.db
 import sqlalchemy
+import sqlalchemy.orm.session
 import transaction
 import unittest
 import zope.component
@@ -96,7 +97,7 @@ def setUp(managed_tables=None):
 
 def tearDown():
     db_util = get_db_util()
-    db_util.session.close_all()
+    sqlalchemy.orm.session.close_all_sessions()
 
 
 def database_test_livecycle_fixture_factory(request):

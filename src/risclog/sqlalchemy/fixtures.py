@@ -2,7 +2,7 @@ import risclog.sqlalchemy.db
 import pytest
 
 
-@pytest.fixture('function')
+@pytest.fixture(scope='function')
 def database__selenium_testing(request):
     """Prepare the database for selenium testing:
 

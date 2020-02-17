@@ -8,7 +8,7 @@ import transaction
 pytest_plugins = 'risclog.sqlalchemy.fixtures'
 
 
-@pytest.fixture('function')
+@pytest.fixture(scope='function')
 def example_model(test_model_factory):
     """Create a persisted example object in the database."""
     model = test_model_factory('db1')

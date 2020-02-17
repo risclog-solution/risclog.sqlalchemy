@@ -6,7 +6,7 @@ import pytz
 import risclog.sqlalchemy.serializer
 
 
-@pytest.fixture('function')
+@pytest.fixture(scope='function')
 def test_model(test_model_factory):
     return test_model_factory('test_serializer')
 
