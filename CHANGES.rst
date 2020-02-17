@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-4.0 (unreleased)
+4.0 (2020-02-17)
 ================
 
 Backward incompatible changes
