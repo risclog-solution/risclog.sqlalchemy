@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-4.1 (unreleased)
+4.1 (2020-03-31)
 ================
 
 - Allow settings `expire_on_commit` during session initialization.
