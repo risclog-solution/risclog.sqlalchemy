@@ -5,7 +5,7 @@ Change log for risclog.sqlalchemy
 4.2 (unreleased)
 ================
 
-- Nothing changed yet.
+- Allow setting `keep_session` during session initialization.
 
 
 4.1 (2020-03-31)
