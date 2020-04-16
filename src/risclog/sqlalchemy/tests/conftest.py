@@ -1,4 +1,5 @@
 import pytest
+
 import risclog.sqlalchemy.testing
 import risclog.sqlalchemy.serializer
 
@@ -13,6 +14,12 @@ def database_1(request):
 def database_2(request):
     return risclog.sqlalchemy.testing.database_fixture_factory(
         request, 'risclog.sqlalchemy.db2', 'db2')
+
+
+@pytest.fixture(scope='session')
+def database_3(request):
+    return risclog.sqlalchemy.testing.database_fixture_factory(
+        request, 'risclog.sqlalchemy.db3', 'db3')
 
 
 @pytest.fixture(scope='function', autouse=True)
