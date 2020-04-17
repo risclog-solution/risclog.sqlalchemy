@@ -5,7 +5,8 @@ Change log for risclog.sqlalchemy
 4.3 (unreleased)
 ================
 
-- Nothing changed yet.
+- Introduce `ModelCache` that reduces the number of DB requests when dealing
+  with huge amounts of sqlalchemy models.
 
 
 4.2 (2020-04-07)
