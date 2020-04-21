@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-4.4 (unreleased)
+4.4 (2020-04-21)
 ================
 
 - Add logging and a flag to disable model preloading in ModelCache.
