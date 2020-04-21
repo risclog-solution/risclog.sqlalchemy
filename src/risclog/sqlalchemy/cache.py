@@ -47,7 +47,9 @@ class ModelCache:
             sequences,
             session,
             engine_name,
-            prefetch=None
+            prefetch=None,
+            preload_models=True,
+            logger=None,
     ):
         """
         Args:
@@ -60,12 +62,15 @@ class ModelCache:
             prefetch: Specifies if certain relations should be prefetched.
             engine_name: Name of the engine used for sequence fetching.
             Dictionary mapping model names to tuples of columns.
+            preload_models: Preloads existing model instances on setup if True.
         """
         self._save_order = save_order
         self._sequences = sequences
         self.session = session
         self._engine_name = engine_name
         self._prefetch = prefetch
+        self._preload_models = preload_models
+        self._logger = logger
         self._cached_instances = {}
         self._indices = {}
 
@@ -145,6 +150,7 @@ class ModelCache:
         if session is None:
             session = self.session
 
+        self._log('info', 'Flushing model cache.')
         self._assign_sequences()
         self._sync_relationship_attrs()
 
@@ -164,6 +170,7 @@ class ModelCache:
         session.flush()
 
         self.clear()
+        self._log('info', 'Flushed model cache.')
 
     def clear(self):
         """Clear the cache. Will result in data loss of unflushed objects."""
@@ -187,7 +194,13 @@ class ModelCache:
                     )
                 )
 
-            self._cached_instances[model_key] = list(query.all())
+            if self._preload_models:
+                self._cached_instances[model_key] = list(query.all())
+            else:
+                # We run a noop DB request here to avoid some hard-to-debug
+                # session transaction errors that crop up otherwise.
+                self._cached_instances[model_key] = list(query.limit(0))
+
             self._register_change_handler(model, self._instance_change_handler)
 
         return self._cached_instances[model_key]
@@ -344,3 +357,8 @@ class ModelCache:
             )
             if instance not in cache:
                 cache.append(instance)
+
+    def _log(self, level, message):
+        """Send `message` to logger on `level` if set on setup."""
+        if self._logger is not None:
+            getattr(self._logger, level)(message)
