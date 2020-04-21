@@ -197,8 +197,9 @@ class ModelCache:
             if self._preload_models:
                 self._cached_instances[model_key] = list(query.all())
             else:
-                # We run a noop DB request here to avoid some hard-to-debug
-                # session transaction errors that crop up otherwise.
+                # XXX: We run a noop DB request here to avoid some
+                # hard-to-debug session transaction errors that crop up
+                # otherwise.
                 self._cached_instances[model_key] = list(query.limit(0))
 
             self._register_change_handler(model, self._instance_change_handler)
