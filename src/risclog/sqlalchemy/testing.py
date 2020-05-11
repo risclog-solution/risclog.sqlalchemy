@@ -1,5 +1,4 @@
 from zope.component._compat import _BLANK
-import gocept.testdb
 import risclog.sqlalchemy.db
 import sqlalchemy
 import sqlalchemy.orm.session
@@ -63,6 +62,7 @@ def database_fixture_factory(request, prefix, name=_BLANK, schema_path=None,
 
     """
     def db_factory():
+        import gocept.testdb
         return gocept.testdb.PostgreSQL(
             prefix=prefix, schema_path=schema_path)
 
