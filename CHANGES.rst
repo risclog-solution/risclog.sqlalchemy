@@ -5,7 +5,8 @@ Change log for risclog.sqlalchemy
 4.5 (unreleased)
 ================
 
-- Nothing changed yet.
+- Improve compatability to integrations that dont have `gocept.testdb`
+  installed.
 
 
 4.4 (2020-04-21)
