@@ -1,7 +1,8 @@
-from itertools import chain
+from itertools import chain, groupby
 
 import sqlalchemy
 from sqlalchemy.inspection import inspect
+from sqlalchemy.orm import attributes
 
 
 class MultipleObjectsFoundException(Exception):
@@ -56,7 +57,7 @@ class ModelCache:
             save_order: Iterable of model names, specifying the order in
             which models will be saved. Used to solve dependency constraints.
             sequences: Dictionary that matches models' attributes to
-            database sequences that are set automatically on flusing. Example:
+            database sequences that are set automatically on flushing. Example:
             {'Model': (('attribute', 'sequence'), )}
             session: SQLAlchemy session used for flushing by default.
             prefetch: Specifies if certain relations should be prefetched.
@@ -150,6 +151,11 @@ class ModelCache:
         if session is None:
             session = self.session
 
+        for instance_cache in self._cached_instances.values():
+            if len(instance_cache) == 0:
+                continue
+            self._deregister_change_handler(type(instance_cache[0]), self._instance_change_handler)
+
         self._log('info', 'Flushing model cache.')
         self._assign_sequences()
         self._sync_relationship_attrs()
@@ -161,16 +167,50 @@ class ModelCache:
                 if model in self._cached_instances
             )
         )
-        session.bulk_save_objects(
+
+        self._bulk_save_objects(
+            session,
             objects,
             return_defaults=False,
             update_changed_only=True,
-            preserve_order=True,
+            preserve_order=False,
         )
         session.flush()
 
         self.clear()
         self._log('info', 'Flushed model cache.')
+
+    def _bulk_save_objects(
+            self,
+            session,
+            objects,
+            return_defaults=False,
+            update_changed_only=True,
+            preserve_order=True
+    ):
+        def sort_key(state):
+            return state.key is not None
+
+        def group_key(state):
+            return state.mapper, state.key is not None
+
+        obj_states = (attributes.instance_state(obj) for obj in objects)
+        if not preserve_order:
+            obj_states = sorted(obj_states, key=sort_key)
+
+        for (mapper, isupdate), states in groupby(obj_states, group_key):
+            # XXX We are relying on SQLAlchem implementation details here
+            # because there is no otherway to keep it from sorting by
+            # mapping (which already happened).
+            session._bulk_save_mappings(
+                mapper,
+                states,
+                isupdate,
+                True,
+                return_defaults,
+                update_changed_only,
+                False,
+            )
 
     def clear(self):
         """Clear the cache. Will result in data loss of unflushed objects."""
@@ -319,6 +359,11 @@ class ModelCache:
 
     def _register_change_handler(self, model, event_handler):
         """Register an event handler for every column of a model."""
+        for attr in inspect(model).column_attrs:
+            sqlalchemy.event.listen(attr, 'set', event_handler)
+
+    def _deregister_change_handler(self, model, event_handler):
+        """Removes an event handler for every column of a model."""
         for attr in inspect(model).column_attrs:
             sqlalchemy.event.listen(attr, 'set', event_handler)
 
