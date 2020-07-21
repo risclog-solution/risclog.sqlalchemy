@@ -5,7 +5,8 @@ Change log for risclog.sqlalchemy
 4.6 (unreleased)
 ================
 
-- Nothing changed yet.
+- Fix json serialization for models that have different column names on the
+  object and in the database.
 
 
 4.5 (2020-05-12)
