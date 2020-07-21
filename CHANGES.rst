@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-4.6 (unreleased)
+4.6 (2020-07-21)
 ================
 
 - Fix json serialization for models that have different column names on the
