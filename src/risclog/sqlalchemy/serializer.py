@@ -3,6 +3,7 @@ import datetime
 import decimal
 import json
 import logging
+import sqlalchemy.orm
 
 
 log = logging.getLogger(__name__)
@@ -10,7 +11,7 @@ log = logging.getLogger(__name__)
 
 # json encoder for sqlalchemy objects
 def sqlalchemy_encode(o):
-    columns = [k for k, v in o.__dict__.items() if not k.startswith('_')]
+    columns = [c.key for c in sqlalchemy.orm.class_mapper(o.__class__).columns]
     result = dict((c, getattr(o, c)) for c in columns)
     return result
 
