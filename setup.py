@@ -9,7 +9,7 @@ import glob
 
 setup(
     name='risclog.sqlalchemy',
-    version='4.7.dev0',
+    version='5.0.dev0',
 
     install_requires=[
         'SQLAlchemy >= 1.0',
@@ -55,8 +55,6 @@ License :: OSI Approved :: Zope Public License
 Natural Language :: English
 Operating System :: OS Independent
 Programming Language :: Python
-Programming Language :: Python :: 2
-Programming Language :: Python :: 2.7
 Programming Language :: Python :: 3
 Programming Language :: Python :: 3.6
 Programming Language :: Python :: 3.7

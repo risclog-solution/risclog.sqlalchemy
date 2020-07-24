@@ -1,7 +1,9 @@
-from itertools import chain
+import csv
+import io
 
 import sqlalchemy
 from sqlalchemy.inspection import inspect
+from sqlalchemy.orm import attributes
 
 
 class MultipleObjectsFoundException(Exception):
@@ -34,9 +36,10 @@ class ModelCache:
     example for primary keys that normally are set automatically when creating
     a new table row.
 
-    For performance gains, `save_changes()` flushes by using SQLAlchemy's bulk
-    functionality which explicitly reduces the ORM behavior. Make sure to not
-    use model instances after you have flushed them. These instances are
+    For performance gains, `save_changes()` flushes by using SQLAlchemy's bulk 
+    functionality and/or psycopg2's `copy_expert` method which explicitly 
+    reduces the ORM behavior. 
+    Make sure to not use model instances after you have flushed them. These instances are
     neither connected to a session nor are they updated accordingly.
     For more information, see: https://docs.sqlalchemy.org/en/13/orm/persistence_techniques.html#bulk-operations
     """  # noqa: E501
@@ -50,19 +53,21 @@ class ModelCache:
             prefetch=None,
             preload_models=True,
             logger=None,
+            use_copy=False,
     ):
         """
         Args:
             save_order: Iterable of model names, specifying the order in
             which models will be saved. Used to solve dependency constraints.
             sequences: Dictionary that matches models' attributes to
-            database sequences that are set automatically on flusing. Example:
+            database sequences that are set automatically on flushing. Example:
             {'Model': (('attribute', 'sequence'), )}
             session: SQLAlchemy session used for flushing by default.
             prefetch: Specifies if certain relations should be prefetched.
             engine_name: Name of the engine used for sequence fetching.
             Dictionary mapping model names to tuples of columns.
             preload_models: Preloads existing model instances on setup if True.
+            use_copy: Use PostgreSQL's COPY command to insert new instances if True.
         """
         self._save_order = save_order
         self._sequences = sequences
@@ -71,6 +76,7 @@ class ModelCache:
         self._prefetch = prefetch
         self._preload_models = preload_models
         self._logger = logger
+        self._use_copy = use_copy
         self._cached_instances = {}
         self._indices = {}
 
@@ -139,7 +145,7 @@ class ModelCache:
         else:
             return self.create(model, **kwargs)
 
-    def save_changes(self, session=None):
+    def save_changes(self, session=None, cursor=None):
         """
         Flush modified and created object to the database before clearing the
         cache.
@@ -149,28 +155,85 @@ class ModelCache:
         """
         if session is None:
             session = self.session
+        if cursor is None and self._use_copy:
+            cursor = self.session.using_bind(self._engine_name).connection().connection.cursor()
 
         self._log('info', 'Flushing model cache.')
         self._assign_sequences()
         self._sync_relationship_attrs()
 
-        objects = chain(
-            *(
-                self._cached_instances[model]
-                for model in self._save_order
-                if model in self._cached_instances
-            )
-        )
-        session.bulk_save_objects(
-            objects,
-            return_defaults=False,
-            update_changed_only=True,
-            preserve_order=True,
-        )
-        session.flush()
+        for model_name in self._save_order:
+            if model_name not in self._cached_instances:
+                continue
+            objects = self._cached_instances[model_name]
+            if len(objects) == 0:
+                continue
+
+            self._deregister_change_handler(type(objects[0]), self._instance_change_handler)
+            new_objects, updated_objects = [], []
+
+            for object in objects:
+                if attributes.instance_state(object).key is None:
+                    new_objects.append(object)
+                else:
+                    updated_objects.append(object)
+
+            if self._use_copy:
+                self._save_by_copy(cursor, new_objects)
+            else:
+                session.bulk_save_objects(new_objects)
+            session.bulk_save_objects(updated_objects)
+            session.flush()
+
+        if self._use_copy:
+           cursor.connection.commit()
 
         self.clear()
         self._log('info', 'Flushed model cache.')
+
+    def _save_by_copy(self, cursor, objects):
+        """
+        Insert objects by using PostgreSQL's COPY command. This is database-specific but one of the
+        most efficient ways to populate a table. Expects instances of one single model per call.
+        See: https://www.postgresql.org/docs/current/sql-copy.html
+
+        Args:
+            cursor: A Psycopg2 cursor
+            objects: SQLAlchemy ORM instances to save
+        """
+        if len(objects) == 0:
+            return
+
+        model = inspect(objects[0]).mapper
+        for table in model.tables:
+            file = io.StringIO()
+            writer = csv.DictWriter(
+                file, table.columns.keys()
+            )
+            columns = [c for c in model.c.items() if
+                       c[1].table == table or c[1].primary_key]
+
+            for object in objects:
+                row = {}
+                for attr, column in columns:
+                    value = getattr(object, attr)
+                    if value is None:
+                        if column.default is not None:
+                            value = column.default.arg
+                        else:
+                            value = r'\N'
+                    elif type(value) != column.type.python_type:
+                        value = column.type.python_type(value)
+                    row[column.key] = value
+                writer.writerow(row)
+
+            file.seek(0)
+            columns_string = ','.join([f'"{column}"' for column in table.columns.keys()])
+            cursor.copy_expert(
+                f'COPY {table} ({columns_string}) '
+                "FROM STDIN WITH CSV DELIMITER ',' NULL '\\N'",
+                file,
+            )
 
     def clear(self):
         """Clear the cache. Will result in data loss of unflushed objects."""
@@ -319,6 +382,11 @@ class ModelCache:
 
     def _register_change_handler(self, model, event_handler):
         """Register an event handler for every column of a model."""
+        for attr in inspect(model).column_attrs:
+            sqlalchemy.event.listen(attr, 'set', event_handler)
+
+    def _deregister_change_handler(self, model, event_handler):
+        """Removes an event handler for every column of a model."""
         for attr in inspect(model).column_attrs:
             sqlalchemy.event.listen(attr, 'set', event_handler)
 
