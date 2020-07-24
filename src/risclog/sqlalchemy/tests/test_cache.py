@@ -39,8 +39,7 @@ def db(database_3):
     return database_3
 
 
-@pytest.fixture(scope='function')
-def cache(db):
+def __create_cache(db, extra_settings=None):
     MODEL_SAVE_ORDER = [
         'PlainModel',
         'LinkedModel',
@@ -50,13 +49,28 @@ def cache(db):
     MODEL_SEQUENCES = {
         'Wagniskennziffer': (('id', 'sequencemodel_id_seq'),),
     }
+    settings = {
+        'save_order': MODEL_SAVE_ORDER,
+        'sequences': MODEL_SEQUENCES,
+        'session': db.session,
+        'engine_name': 'db3',
+    }
+    if extra_settings is not None:
+        settings.update(extra_settings)
     cache = ModelCache(
-        save_order=MODEL_SAVE_ORDER,
-        sequences=MODEL_SEQUENCES,
-        session=db.session,
-        engine_name='db3',
+        **settings
     )
-    yield cache
+    return cache
+
+
+@pytest.fixture(scope='function')
+def cache(db):
+    yield __create_cache(db)
+
+
+@pytest.fixture(scope='function')
+def copy_cache(db):
+    yield __create_cache(db, {'use_copy': True})
 
 
 class TestFindGet:
@@ -119,11 +133,25 @@ class TestCreate:
 
         assert 1 == PlainModel.query().count()
 
+    def test_create_object_with_copy(self, db, copy_cache):
+        copy_cache.create(
+            PlainModel, id='1',
+        )
+        copy_cache.save_changes(db.session)
+
+        assert 1 == PlainModel.query().count()
+
 
 class TestFlush:
     def test_creation(self, db, cache):
         svg = cache.create(PlainModel, id='1', )
         cache.save_changes(db.session)
+
+        assert 1 == PlainModel.query().filter(PlainModel.id == svg.id).count()
+
+    def test_creation_with_copy(self, db, copy_cache):
+        svg = copy_cache.create(PlainModel, id='1', )
+        copy_cache.save_changes(db.session)
 
         assert 1 == PlainModel.query().filter(PlainModel.id == svg.id).count()
 
