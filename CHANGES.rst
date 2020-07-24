@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-5.0 (unreleased)
+5.0 (2020-07-24)
 ================
 
 - Use PostgreSQL's `COPY` in `ModelCache` for performance gains. Drop Python2 support. (#13317)
