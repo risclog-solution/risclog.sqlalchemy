@@ -1,5 +1,6 @@
 import csv
 import io
+import gc
 
 import sqlalchemy
 from sqlalchemy.inspection import inspect
@@ -186,7 +187,7 @@ class ModelCache:
             session.flush()
 
         if self._use_copy:
-           cursor.connection.commit()
+            cursor.connection.commit()
 
         self.clear()
         self._log('info', 'Flushed model cache.')
@@ -239,6 +240,7 @@ class ModelCache:
         """Clear the cache. Will result in data loss of unflushed objects."""
         self._cached_instances.clear()
         self._indices.clear()
+        gc.collect()
 
     def _get_model_cache(self, model):
         """

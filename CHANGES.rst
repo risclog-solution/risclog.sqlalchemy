@@ -5,7 +5,7 @@ Change log for risclog.sqlalchemy
 5.1 (unreleased)
 ================
 
-- Nothing changed yet.
+- Explicitely collect garbage on ModelCache flush.
 
 
 5.0 (2020-07-24)
