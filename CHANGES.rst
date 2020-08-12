@@ -5,7 +5,7 @@ Change log for risclog.sqlalchemy
 5.2 (unreleased)
 ================
 
-- Nothing changed yet.
+- Optimize `COPY` to use less memory.
 
 
 5.1 (2020-08-12)
