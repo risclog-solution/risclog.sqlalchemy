@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-5.3 (unreleased)
+5.3 (2020-08-14)
 ================
 
 - Remove optimization as it breaks with some charsets.
