@@ -1,12 +1,10 @@
 import csv
-import tempfile
+import io
 import gc
 
 import sqlalchemy
 from sqlalchemy.inspection import inspect
 from sqlalchemy.orm import attributes
-
-MAX_BYTES_COPY_FLUSH = 50000000  # this is not no. of lines, its no. of bytes
 
 
 class MultipleObjectsFoundException(Exception):
@@ -217,50 +215,38 @@ class ModelCache:
 
         model = inspect(objects[0]).mapper
         for table in model.tables:
-            with tempfile.NamedTemporaryFile(
-                suffix='.csv', mode='w+'
-            ) as file:
-                writer = csv.DictWriter(
-                    file, table.columns.keys()
-                )
-                columns = [
-                    c for c in model.c.items()
-                    if c[1].table == table or c[1].primary_key
-                ]
+            file = io.StringIO()
+            writer = csv.DictWriter(file, table.columns.keys())
+            columns = [
+                c for c in model.c.items()
+                if c[1].table == table or c[1].primary_key
+            ]
 
-                for object in objects:
-                    row = {}
-                    for attr, column in columns:
-                        value = getattr(object, attr)
-                        if value is None:
-                            if column.default is not None:
-                                value = column.default.arg
-                            else:
-                                value = r'\N'
-                        elif type(value) != column.type.python_type:
-                            value = column.type.python_type(value)
-                        row[column.key] = value
-                    writer.writerow(row)
+            for object in objects:
+                row = {}
+                for attr, column in columns:
+                    value = getattr(object, attr)
+                    if value is None:
+                        if column.default is not None:
+                            value = column.default.arg
+                        else:
+                            value = r'\N'
+                    elif type(value) != column.type.python_type:
+                        value = column.type.python_type(value)
+                    row[column.key] = value
+                writer.writerow(row)
 
-                file.seek(0)
+            file.seek(0)
 
-                columns_string = ','.join(
-                    [f'"{column}"' for column in table.columns.keys()]
-                )
-                values = file.readlines(MAX_BYTES_COPY_FLUSH)
-                while values:
-                    with tempfile.NamedTemporaryFile(
-                        suffix='.csv', mode='w+'
-                    ) as copy_csv:
-                        copy_csv.write(''.join(values))
-                        copy_csv.seek(0)
-                        cursor.copy_expert(
-                            f'COPY {table} ({columns_string}) '
-                            "FROM STDIN WITH CSV DELIMITER ',' NULL '\\N'",
-                            copy_csv,
-                        )
-                        cursor.connection.commit()
-                    values = file.readlines(MAX_BYTES_COPY_FLUSH)
+            columns_string = ','.join(
+                [f'"{column}"' for column in table.columns.keys()]
+            )
+            cursor.copy_expert(
+                f'COPY {table} ({columns_string}) '
+                "FROM STDIN WITH CSV DELIMITER ',' NULL '\\N'",
+                file,
+            )
+            cursor.connection.commit()
 
     def clear(self):
         """Clear the cache. Will result in data loss of unflushed objects."""
