@@ -5,11 +5,11 @@ Developing risclog.sqlalchemy
 :Author:
     `gocept <http://gocept.com/>`_ <mail@gocept.com>
 
-:Online documentation:
+:Outdated Online documentation:
     https://pythonhosted.org/risclog.sqlalchemy/
 
 :PyPI page:
-    http://pypi.python.org/pypi/risclog.sqlalchemy/
+    https://pypi.org/project/risclog.sqlalchemy/
 
 :Issue tracker:
     https://github.com/gocept/risclog.sqlalchemy/issues/
@@ -38,9 +38,9 @@ tests against all supported python versions. You will need ``tox`` to run those
 tests::
 
     $ tox
-    py27 develop-inst-nodeps...
+    py36 develop-inst-nodeps...
     ...
-    py33 develop-inst-nodeps...
+    py39 develop-inst-nodeps...
 
 Documentation
 =============
