@@ -1,6 +1,5 @@
 from risclog.sqlalchemy.db import register_class
 from risclog.sqlalchemy.interfaces import IDatabase, Added
-from zope.component._compat import _BLANK
 import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
@@ -9,9 +8,9 @@ import zope.interface
 import zope.sqlalchemy
 
 
-class ObjectBase(object):
+class ObjectBase:
 
-    _engine_name = _BLANK  # set another name to use multiple databases
+    _engine_name = ''  # set another name to use multiple databases
 
     @sqlalchemy.ext.declarative.declared_attr
     def __tablename__(cls):
@@ -76,7 +75,7 @@ class ReflectedObjectBase(
 class EnsureDeferredReflection(sqlalchemy.ext.declarative.DeclarativeMeta):
 
     def __init__(cls, name, bases, dct):
-        super(EnsureDeferredReflection, cls).__init__(name, bases, dct)
+        super().__init__(name, bases, dct)
         db = zope.component.queryUtility(IDatabase)
         if db is not None:
             db.prepare_deferred(cls)

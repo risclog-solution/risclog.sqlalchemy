@@ -1,4 +1,3 @@
-from zope.component._compat import _BLANK
 import gocept.testdb
 import risclog.sqlalchemy.db
 import sqlalchemy
@@ -14,11 +13,11 @@ def get_db_util():
         risclog.sqlalchemy.interfaces.IDatabase)
 
 
-def setUpDB(factory, name=_BLANK, alembic_location=None):
+def setUpDB(factory, name='', alembic_location=None):
     db = factory()
     if db.exists:
         raise ValueError(
-            'Database {}@{} already exists!'.format(db.db_name, db.db_host))
+            f'Database {db.db_name}@{db.db_host} already exists!')
     db.create()
     db_util = risclog.sqlalchemy.db.get_database(testing=True)
     db_util.register_engine(
@@ -26,7 +25,7 @@ def setUpDB(factory, name=_BLANK, alembic_location=None):
     return db
 
 
-def tearDownDB(db, name=_BLANK):
+def tearDownDB(db, name=''):
     # close all connections, but...
     transaction.abort()
     # ...sometimes transaction.abort() is not enough, and...
@@ -44,7 +43,7 @@ def tearDownDB(db, name=_BLANK):
         db_util._teardown_utility()
 
 
-def database_fixture_factory(request, prefix, name=_BLANK, schema_path=None,
+def database_fixture_factory(request, prefix, name='', schema_path=None,
                              create_all=False, alembic_location=None):
     """Factory creating a py.test fixture for a database.
 

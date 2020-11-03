@@ -9,14 +9,14 @@ import glob
 
 setup(
     name='risclog.sqlalchemy',
-    version='4.1.dev0',
-
+    version='5.0.dev0',
+    python_requires='>=3.6, <4',
     install_requires=[
         'SQLAlchemy >= 1.0',
         'alembic >= 0.7',
         'pytz',
         'setuptools',
-        'zope.component >= 4.0.1, <= 4.4.1',
+        'zope.component >= 4.0.1',
         'zope.interface',
         'zope.sqlalchemy >= 1.3',
     ],
@@ -29,9 +29,6 @@ setup(
             'mock',
             'pyramid',
             'pytest',
-        ],
-        'python2': [
-            'plone.testing[test]'
         ],
         'pyramid': [
             'pyramid'
@@ -55,9 +52,8 @@ License :: OSI Approved :: Zope Public License
 Natural Language :: English
 Operating System :: OS Independent
 Programming Language :: Python
-Programming Language :: Python :: 2
-Programming Language :: Python :: 2.7
 Programming Language :: Python :: 3
+Programming Language :: Python :: 3 :: only
 Programming Language :: Python :: 3.6
 Programming Language :: Python :: 3.7
 Programming Language :: Python :: 3.8

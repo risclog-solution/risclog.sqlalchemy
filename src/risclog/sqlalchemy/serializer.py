@@ -10,10 +10,10 @@ import sqlalchemy.orm
 log = logging.getLogger(__name__)
 
 
-#json encoder for sqlalchemy objects
+# json encoder for sqlalchemy objects
 def sqlalchemy_encode(o):
     columns = [c.key for c in sqlalchemy.orm.class_mapper(o.__class__).columns]
-    result = dict((c, getattr(o, c)) for c in columns)
+    result = {c: getattr(o, c) for c in columns}
     return result
 
 

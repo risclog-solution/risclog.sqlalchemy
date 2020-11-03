@@ -1,4 +1,4 @@
-import mock
+from unittest import mock
 import pkg_resources
 import pytest
 import risclog.sqlalchemy.model
@@ -51,11 +51,11 @@ def test_Database_is_able_to_handle_multiple_databases(
 
     # Tables are stored in different databases:
     inspector_1 = Inspector.from_engine(database_1.get_engine('db1'))
-    assert set(['tmp_functest', 'model_1']) == \
+    assert {'tmp_functest', 'model_1'} == \
            set(inspector_1.get_table_names())
 
     inspector_2 = Inspector.from_engine(database_2.get_engine('db2'))
-    assert set(['tmp_functest', 'model_2']) == \
+    assert {'tmp_functest', 'model_2'} == \
            set(inspector_2.get_table_names())
 
 

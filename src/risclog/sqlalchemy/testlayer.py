@@ -8,7 +8,7 @@ class DatabaseLayer(plone.testing.Layer):
     defaultBases = [plone.testing.zca.LAYER_CLEANUP]
 
     def __init__(self, name, factory, managed_tables=None):
-        super(DatabaseLayer, self).__init__()
+        super().__init__()
         # name should be the engine name of the mapped classes
         self.engine_name = name
         self.name = 'database_' + name

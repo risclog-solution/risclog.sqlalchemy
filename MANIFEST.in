@@ -1,8 +1,5 @@
 include *.rst
 
-include *.py
-exclude bootstrap.py
-
 include .coveragerc
 exclude .coveragerc
 
@@ -14,12 +11,6 @@ exclude pytest.ini
 
 include tox.ini
 exclude tox.ini
-
-include .hgtags
-exclude .hgtags
-
-include .hgignore
-exclude .hgignore
 
 exclude MANIFEST.in
 
