@@ -1,4 +1,3 @@
-from zope.component._compat import _BLANK
 import alembic.config
 import alembic.environment
 import alembic.migration
@@ -82,7 +81,7 @@ def get_database(testing=False):
 
 
 @zope.interface.implementer(risclog.sqlalchemy.interfaces.IDatabase)
-class Database(object):
+class Database:
 
     def __init__(self, testing=False):
         assert zope.component.queryUtility(
@@ -97,7 +96,7 @@ class Database(object):
             self.session_factory, keep_session=testing)
         self._setup_utility()
 
-    def register_engine(self, dsn, engine_args={}, name=_BLANK,
+    def register_engine(self, dsn, engine_args={}, name='',
                         alembic_location=None):
         assert_engine_not_registered(name, self._engines)
         engine_args['echo'] = bool(int(os.environ.get(
@@ -111,13 +110,13 @@ class Database(object):
         # reflection now.
         self.prepare_deferred(_ENGINE_CLASS_MAPPING.get(name))
 
-    def get_engine(self, name=_BLANK):
+    def get_engine(self, name=''):
         return self._engines[name]['engine']
 
     def get_all_engines(self):
         return [x['engine'] for x in self._engines.values()]
 
-    def drop_engine(self, name=_BLANK):
+    def drop_engine(self, name=''):
         engine = self.get_engine(name)
         engine.dispose()
         del self._engines[name]
@@ -128,7 +127,7 @@ class Database(object):
         if issubclass(class_, sqlalchemy.ext.declarative.DeferredReflection):
             class_.prepare(self.get_engine(class_._engine_name))
 
-    def create_all(self, engine_name=_BLANK, create_defaults=True):
+    def create_all(self, engine_name='', create_defaults=True):
         """Create all tables etc. for an engine."""
         engine = self._engines[engine_name]
         _ENGINE_CLASS_MAPPING[engine_name].metadata.create_all(
@@ -144,7 +143,7 @@ class Database(object):
         if create_defaults:
             self.create_defaults(engine_name)
 
-    def create_defaults(self, engine_name=_BLANK):
+    def create_defaults(self, engine_name=''):
         for name, class_ in risclog.sqlalchemy.model.class_registry.items():
             # do not call create_defaults for foreign engines,
             # since they may not be set up yet
@@ -177,7 +176,7 @@ class Database(object):
                          "testing). Refusing to set up database connection "
                          "to {}.".format(engine.url))
 
-    def assert_database_revision_is_current(self, engine_name=_BLANK):
+    def assert_database_revision_is_current(self, engine_name=''):
         def assert_revision(ac, head_rev, db_rev):
             if head_rev != db_rev:
                 raise ValueError(
@@ -188,7 +187,7 @@ class Database(object):
 
         self._run_in_alembic_context(assert_revision, engine_name)
 
-    def update_database_revision_to_current(self, engine_name=_BLANK):
+    def update_database_revision_to_current(self, engine_name=''):
         def upgrade_revision(ac, head_rev, db_rev):
             if head_rev != db_rev:
                 ac.upgrade(head_rev)
@@ -250,7 +249,7 @@ class Database(object):
         if commit:
             transaction.commit()
 
-    def _run_in_alembic_context(self, func, engine_name=_BLANK):
+    def _run_in_alembic_context(self, func, engine_name=''):
         """Run a function in `alembic_context`.
 
         The function must take three parameters:
@@ -269,7 +268,7 @@ class Database(object):
             return func(ac, head_rev, db_rev)
 
 
-class alembic_context(object):
+class alembic_context:
 
     def __init__(self, engine, script_location):
         self.engine = engine
@@ -286,7 +285,7 @@ class alembic_context(object):
             raise exc_value
 
 
-class AlembicContext(object):
+class AlembicContext:
 
     def __init__(self, conn, script_location):
         self.conn = conn

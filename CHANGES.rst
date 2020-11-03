@@ -2,10 +2,20 @@
 Change log for risclog.sqlalchemy
 =================================
 
-4.1 (unreleased)
+5.0 (unreleased)
 ================
 
-- Nothing changed yet.
+Backward incompatible changes
+-----------------------------
+
+- Drop support for Python 2.
+
+- Drop the ``python2`` extra in ``setup.py``.
+
+Features
+--------
+
+- No longer constraint to ``zope.component < 4.4.1`` (introduced in 3.0).
 
 
 4.0 (2020-02-17)
@@ -35,7 +45,7 @@ Other changes
 - Reintroduce `RoutingSession.using_bind` as it is needed for executing queries
   in multi database environments. It was removed in version `2.0`.
 
-- Pin to `zope.component < 4.4.1` for now as we are using a private variable
+- Pin to ``zope.component < 4.4.1`` for now as we are using a private variable
   from this package which has been removed lately.
 
 

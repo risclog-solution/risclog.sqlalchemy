@@ -53,7 +53,7 @@ def test_model_factory(request):
             foo = Column(Text, primary_key=True)
 
         test_object = ExampleModel()
-        test_object.foo = u'bar'
+        test_object.foo = 'bar'
         return test_object
 
     def unregister_model():
