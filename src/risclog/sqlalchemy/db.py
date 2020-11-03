@@ -20,7 +20,7 @@ _ENGINE_CLASS_MAPPING = {}
 def assert_engine_not_registered(name, mapping):
     """Ensure a consistent error message."""
     assert name not in mapping, \
-        'An engine for name `{}` is already registered.'.format(name)
+        f'An engine for name `{name}` is already registered.'
 
 
 def register_class(class_):
@@ -58,7 +58,7 @@ class RoutingSession(sqlalchemy.orm.Session):
                 return db_util.get_engine(engine_name)
 
         raise RuntimeError(
-            "Did not find an engine for {}".format(mapper.class_))
+            f"Did not find an engine for {mapper.class_}")
 
     def using_bind(self, name):
         """Select an engine name if not using mappers."""

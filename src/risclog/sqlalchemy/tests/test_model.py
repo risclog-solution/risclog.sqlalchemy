@@ -1,10 +1,6 @@
+from unittest import mock
 import pytest
 import unittest
-
-try:
-    from unittest import mock
-except ImportError:
-    from unittest import mock
 
 
 class ObjectBaseTests(unittest.TestCase):

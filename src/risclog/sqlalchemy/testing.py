@@ -17,7 +17,7 @@ def setUpDB(factory, name='', alembic_location=None):
     db = factory()
     if db.exists:
         raise ValueError(
-            'Database {}@{} already exists!'.format(db.db_name, db.db_host))
+            f'Database {db.db_name}@{db.db_host} already exists!')
     db.create()
     db_util = risclog.sqlalchemy.db.get_database(testing=True)
     db_util.register_engine(
