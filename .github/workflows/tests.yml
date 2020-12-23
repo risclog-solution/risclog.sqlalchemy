@@ -13,7 +13,7 @@ jobs:
   tests:
     services:
       postgres:
-        image: postgres
+        image: postgres:9
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: P0sTGrE5*Pa55W0rt!
