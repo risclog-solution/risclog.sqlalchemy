@@ -17,6 +17,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: P0sTGrE5*Pa55W0rt!
+          POSTGRES_PASS: P0sTGrE5*Pa55W0rt!
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -54,10 +55,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install tox
-    - name: Setup PG Env
-      run: |
-        echo "localhost:5432:*:postgres:P0sTGrE5*Pa55W0rt!" >> ~/.pgpass
-        chmod 600 ~/.pgpass
     - name: Test
       run: tox -e ${{ matrix.config[1] }}
     - name: Coverage
