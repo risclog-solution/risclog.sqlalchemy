@@ -15,9 +15,7 @@ jobs:
       postgres:
         image: postgres:9
         env:
-          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: P0sTGrE5*Pa55W0rt!
-          POSTGRES_PASS: P0sTGrE5*Pa55W0rt!
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -30,11 +28,7 @@ jobs:
       matrix:
         config:
         # [Python version, tox env]
-        - ["3.6",   "py36"]
         - ["3.7",   "py37"]
-        - ["3.8",   "py38"]
-        - ["3.9",   "py39"]
-        - ["3.8",   "coverage"]
 
     runs-on: ubuntu-latest
     name: ${{ matrix.config[1] }}
@@ -44,6 +38,10 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.config[0] }}
+    - name: Setup PG Env
+       run: |
+         echo "0.0.0.0:5432:*:postgres:P0sTGrE5*Pa55W0rt!" >> ~/.pgpass
+         chmod 600 ~/.pgpass
     - name: Pip cache
       uses: actions/cache@v2
       with:
@@ -56,6 +54,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox
     - name: Test
+        env:
+          POSTGRES_HOST: 0.0.0.0
+          POSTGRES_USER: postgres
       run: tox -e ${{ matrix.config[1] }}
     - name: Coverage
       if: matrix.config[1] == 'coverage'
