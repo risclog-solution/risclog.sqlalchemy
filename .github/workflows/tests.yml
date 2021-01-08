@@ -54,7 +54,7 @@ jobs:
         POSTGRES_HOST: 0.0.0.0
         POSTGRES_USER: postgres
         POSTGRES_PASS: P0sTGrE5*Pa55W0rt!
-      run: tox -e ${{ matrix.config[1] }}
+      run: tox -e ${{ matrix.config[1] }} -- -vv
     - name: Coverage
       if: matrix.config[1] == 'coverage'
       run: |
