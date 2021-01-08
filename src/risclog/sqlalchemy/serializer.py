@@ -51,11 +51,13 @@ def encode(o):
             return encoder(o)
     return json._default_encoder._default_orig(o)
 
+
 try:
     import pyramid.renderers
     has_pyramid = True
 except ImportError:
     has_pyramid = False
+
 
 if has_pyramid:
     def json_renderer_factory(*args, **kw):

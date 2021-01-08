@@ -95,7 +95,6 @@ def setUp(managed_tables=None):
 
 
 def tearDown():
-    db_util = get_db_util()
     sqlalchemy.orm.session.close_all_sessions()
 
 
