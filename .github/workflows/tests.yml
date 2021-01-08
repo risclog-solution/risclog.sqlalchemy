@@ -39,7 +39,7 @@ jobs:
       with:
         python-version: ${{ matrix.config[0] }}
     - name: Setup PG Env
-       run: |
+      run: |
          echo "0.0.0.0:5432:*:postgres:P0sTGrE5*Pa55W0rt!" >> ~/.pgpass
          chmod 600 ~/.pgpass
     - name: Pip cache
@@ -54,9 +54,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox
     - name: Test
-        env:
-          POSTGRES_HOST: 0.0.0.0
-          POSTGRES_USER: postgres
+      env:
+        POSTGRES_HOST: 0.0.0.0
+        POSTGRES_USER: postgres
       run: tox -e ${{ matrix.config[1] }}
     - name: Coverage
       if: matrix.config[1] == 'coverage'
