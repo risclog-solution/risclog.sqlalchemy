@@ -2,10 +2,10 @@ name: tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
-    type: [ "opened", "reopened", "synchronize" ]
+    branches: [master]
+    type: ["opened", "reopened", "synchronize"]
   schedule:
     - cron: '0 12 * * 0'  # run once a week on Sunday
 
@@ -27,41 +27,41 @@ jobs:
     strategy:
       matrix:
         config:
-        # [Python version, tox env]
-        - ["3.7",   "py37"]
+          # [Python version, tox env]
+          - ["3.7", "py37"]
 
     runs-on: ubuntu-latest
     name: ${{ matrix.config[1] }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.config[0] }}
-    - name: Setup PG Env
-      run: |
-         echo "0.0.0.0:5432:*:postgres:P0sTGrE5*Pa55W0rt!" >> ~/.pgpass
-         chmod 600 ~/.pgpass
-    - name: Pip cache
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('setup.*', 'tox.ini') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install tox
-    - name: Test
-      env:
-        POSTGRES_HOST: 0.0.0.0
-        POSTGRES_USER: postgres
-      run: tox -e ${{ matrix.config[1] }}
-    - name: Coverage
-      if: matrix.config[1] == 'coverage'
-      run: |
-        pip install coveralls coverage-python-version
-        coveralls
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.config[0] }}
+      - name: Setup PG Env
+        run: |
+           echo "0.0.0.0:5432:*:postgres:P0sTGrE5*Pa55W0rt!" >> ~/.pgpass
+           chmod 600 ~/.pgpass
+      - name: Pip cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('setup.*', 'tox.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install tox
+      - name: Test
+        env:
+          POSTGRES_HOST: 0.0.0.0
+          POSTGRES_USER: postgres
+        run: tox -e ${{ matrix.config[1] }}
+      - name: Coverage
+        if: matrix.config[1] == 'coverage'
+        run: |
+          pip install coveralls coverage-python-version
+          coveralls
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
