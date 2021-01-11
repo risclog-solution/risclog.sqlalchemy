@@ -5,7 +5,7 @@ Change log for risclog.sqlalchemy
 5.1 (unreleased)
 ================
 
-- Nothing changed yet.
+- Use github actions as CI.
 
 
 5.0 (2020-11-03)
