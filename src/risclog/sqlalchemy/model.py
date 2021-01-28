@@ -1,5 +1,6 @@
 from risclog.sqlalchemy.db import register_class
-from risclog.sqlalchemy.interfaces import IDatabase, Added
+from risclog.sqlalchemy.interfaces import Added
+from risclog.sqlalchemy.interfaces import IDatabase
 import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm

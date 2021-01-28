@@ -1,6 +1,6 @@
 import pytest
-import risclog.sqlalchemy.testing
 import risclog.sqlalchemy.serializer
+import risclog.sqlalchemy.testing
 
 
 @pytest.fixture(scope='session')
@@ -35,7 +35,8 @@ def test_model_factory(request):
     Object = None
 
     def factory(engine_name):
-        from sqlalchemy import Column, Text
+        from sqlalchemy import Column
+        from sqlalchemy import Text
         import risclog.sqlalchemy.db
         import risclog.sqlalchemy.model
 

@@ -1,5 +1,5 @@
-import risclog.sqlalchemy.db
 import pytest
+import risclog.sqlalchemy.db
 
 
 @pytest.fixture(scope='function')
