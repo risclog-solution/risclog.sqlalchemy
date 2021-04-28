@@ -19,4 +19,4 @@ def upgrade():
 
 
 def downgrade():
-    op.drop_table('foobar')
+    op.drop_table('foobar')  # pragma: no cover
