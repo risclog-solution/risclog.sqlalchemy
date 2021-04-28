@@ -40,7 +40,16 @@ class RoutingSession(sqlalchemy.orm.Session):
 
     _name = None
 
-    def get_bind(self, mapper=None, clause=None):
+    def get_bind(
+        self,
+        mapper=None,
+        clause=None,
+        bind=None,
+        _sa_skip_events=None,
+        _sa_skip_for_implicit_returning=False,
+    ):
+        if bind:
+            return bind
         db_util = zope.component.getUtility(
             risclog.sqlalchemy.interfaces.IDatabase)
         if self._name:
@@ -217,8 +226,7 @@ class Database:
               empty_alembic_version=False, commit=True):
         transaction.abort()
         if table_names is None:
-            inspector = sqlalchemy.engine.reflection.Inspector.from_engine(
-                engine)
+            inspector = sqlalchemy.inspect(engine)
             table_names = inspector.get_table_names()
 
             try:

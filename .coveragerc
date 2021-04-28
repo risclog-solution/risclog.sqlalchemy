@@ -4,10 +4,7 @@ source = risclog.sqlalchemy
 
 [report]
 precision = 2
-omit = */interfaces.py
-       */interfaces/*
-       */tests.py
-       */tests/*
+fail_under = 84
 
 [html]
 directory = coverage-report

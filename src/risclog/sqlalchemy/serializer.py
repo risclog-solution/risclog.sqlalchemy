@@ -54,7 +54,7 @@ def encode(o):
 try:
     import pyramid.renderers
     has_pyramid = True
-except ImportError:
+except ImportError:  # pragma: no cover
     has_pyramid = False
 
 

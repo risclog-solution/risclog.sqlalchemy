@@ -34,8 +34,8 @@ def tearDownDB(db, name=''):
         db_util.drop_engine(name)
     # ...connections that have been checked-out from the pool and not yet
     # returned are not closed by dispose, either, so we have to hunt them
-    # down ourselves:
-    for conn in sqlalchemy.pool._refs:
+    # down ourselves (This is only necessary/possible for SQLAlchemy < 1.4.):
+    for conn in getattr(sqlalchemy.pool, '_refs', ()):
         conn.close()
     db.drop()
     if db_util and not db_util.get_all_engines():
@@ -95,7 +95,12 @@ def setUp(managed_tables=None):
 
 
 def tearDown():
-    sqlalchemy.orm.session.close_all_sessions()
+    try:
+        sqlalchemy.orm.session.close_all_sessions()
+    except AttributeError:
+        # close_all_sessions was deprecated in SQLAlchemy 1.3:
+        db_util = get_db_util()
+        db_util.session.close_all()
 
 
 def database_test_livecycle_fixture_factory(request):
