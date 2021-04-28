@@ -98,7 +98,7 @@ def tearDown():
     try:
         sqlalchemy.orm.session.close_all_sessions()
     except AttributeError:
-        # close_all_sessions was deprecated in 1.3.*
+        # close_all_sessions was deprecated in SQLAlchemy 1.3:
         db_util = get_db_util()
         db_util.session.close_all()
 
