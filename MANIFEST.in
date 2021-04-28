@@ -1,4 +1,5 @@
 include *.rst
+include *.txt
 
 include .coveragerc
 exclude .coveragerc
@@ -11,6 +12,9 @@ exclude pytest.ini
 
 include tox.ini
 exclude tox.ini
+
+include .pre-commit-config.yaml
+exclude .pre-commit-config.yaml
 
 exclude MANIFEST.in
 
