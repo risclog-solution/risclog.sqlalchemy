@@ -226,8 +226,7 @@ class Database:
               empty_alembic_version=False, commit=True):
         transaction.abort()
         if table_names is None:
-            inspector = sqlalchemy.engine.reflection.Inspector.from_engine(
-                engine)
+            inspector = sqlalchemy.inspect(engine)
             table_names = inspector.get_table_names()
 
             try:
