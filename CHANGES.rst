@@ -5,6 +5,14 @@ Change log for risclog.sqlalchemy
 5.1 (unreleased)
 ================
 
+Features
+--------
+
+- Ensure compatibility with ``SQLAlchemy >= 1.4``.
+
+Other changes
+-------------
+
 - Use github actions as CI.
 
 
