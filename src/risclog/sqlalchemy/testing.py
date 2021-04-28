@@ -95,7 +95,12 @@ def setUp(managed_tables=None):
 
 
 def tearDown():
-    sqlalchemy.orm.session.close_all_sessions()
+    try:
+        sqlalchemy.orm.session.close_all_sessions()
+    except AttributeError:
+        # close_all_sessions was deprecated in 1.3.*
+        db_util = get_db_util()
+        db_util.session.close_all()
 
 
 def database_test_livecycle_fixture_factory(request):
