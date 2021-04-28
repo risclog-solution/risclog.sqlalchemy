@@ -8,6 +8,7 @@ omit = */interfaces.py
        */interfaces/*
        */tests.py
        */tests/*
+fail_under = 77
 
 [html]
 directory = coverage-report
