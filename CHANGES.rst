@@ -5,7 +5,7 @@ Change log for risclog.sqlalchemy
 5.2 (unreleased)
 ================
 
-- Nothing changed yet.
+- Allow specifying `keep_session` and `expire_on_commit`.
 
 
 5.1 (2021-04-28)

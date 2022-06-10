@@ -119,13 +119,17 @@ def test_database_is_detected_automatically_among_several(
 
     class ObjectBase_2(ObjectBase):
         _engine_name = 'db2'
-    declarative_base(ObjectBase_2)
+    Base_2 = declarative_base(ObjectBase_2)
+
+    class Model_2(Base_2):
+        id = Column(Integer, primary_key=True)
 
     def tearDown():
         risclog.sqlalchemy.db.unregister_class(Model_1)
     request.addfinalizer(tearDown)
 
     database_1.create_all('db1')
+    database_2.create_all('db2')
 
     db = get_database(testing=True)
     # It used to be necessary to bind the session to the database to be
@@ -133,12 +137,17 @@ def test_database_is_detected_automatically_among_several(
     # case as of SQLAlchemy 1.0.
     assert db.session.query(Model_1).count() == 0
 
+    Model_1.create().persist()
+    Model_2.create().persist()
+    import transaction
+    transaction.commit()
+
     # When using session.execute, a manual bind is necessary though
     with pytest.raises(RuntimeError):
         assert db.session.execute('SELECT count(*) FROM model_1').fetchall()
     # Using a bound session leads to a result:
     assert db.session.using_bind('db1').execute(
-        'SELECT count(*) FROM model_1').fetchall() == [(0,)]
+        'SELECT count(*) FROM model_1').fetchall() == [(1,)]
 
 
 def test_create_all_marks_alembic_current(database_1, request):

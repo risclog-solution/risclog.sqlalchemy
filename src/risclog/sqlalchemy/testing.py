@@ -62,6 +62,7 @@ def database_fixture_factory(request, prefix, name='', schema_path=None,
 
     """
     def db_factory():
+        import gocept.testdb
         return gocept.testdb.PostgreSQL(
             prefix=prefix, schema_path=schema_path)
 

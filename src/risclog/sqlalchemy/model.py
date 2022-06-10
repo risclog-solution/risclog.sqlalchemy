@@ -51,8 +51,12 @@ class ObjectBase:
         zope.component.getUtility(IDatabase).delete(self)
 
     @classmethod
-    def query(cls):
-        return zope.component.getUtility(IDatabase).query(cls)
+    def query(cls, *args):
+        db = zope.component.getUtility(IDatabase)
+        if args:
+            selects = list(getattr(cls, a) for a in args)
+            return db.query(*selects).select_from(cls)
+        return db.query(cls)
 
     @classmethod
     def get(cls, id):
