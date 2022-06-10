@@ -1,9 +1,12 @@
+from .. import model
+from ..cache import ModelCache
+from ..cache import MultipleObjectsFoundException
+from sqlalchemy import Column
+from sqlalchemy import ForeignKey
+from sqlalchemy import Integer
+from sqlalchemy import String
 import pytest
 import sqlalchemy
-from sqlalchemy import Column, ForeignKey, Integer, String
-
-from .. import model
-from ..cache import ModelCache, MultipleObjectsFoundException
 
 
 class TestObject(model.ObjectBase):
