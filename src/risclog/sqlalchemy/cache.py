@@ -1,13 +1,12 @@
-import sys
-import logging
-import csv
-import io
-import gc
-
-import sqlalchemy
+from risclog.sqlalchemy.model import ObjectBase
 from sqlalchemy.inspection import inspect
 from sqlalchemy.orm import attributes
-from risclog.sqlalchemy.model import ObjectBase
+import csv
+import gc
+import io
+import logging
+import sqlalchemy
+import sys
 
 
 class MultipleObjectsFoundException(Exception):
