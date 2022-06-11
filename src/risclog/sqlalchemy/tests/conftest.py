@@ -15,12 +15,6 @@ def database_2(request):
         request, 'risclog.sqlalchemy.db2', 'db2')
 
 
-@pytest.fixture(scope='session')
-def database_3(request):
-    return risclog.sqlalchemy.testing.database_fixture_factory(
-        request, 'risclog.sqlalchemy.db3', 'db3')
-
-
 @pytest.fixture(scope='function', autouse=True)
 def database_test_livecycle(request, database_1, database_2):
     """Make sure each test gets a clean database + session."""
