@@ -4,7 +4,6 @@ from sqlalchemy.orm import attributes
 import csv
 import gc
 import io
-import logging
 import sqlalchemy
 import sys
 
