@@ -12,8 +12,8 @@ setup(
     version='3.1.dev0',
 
     install_requires=[
-        'SQLAlchemy >= 1.0',
-        'alembic >= 0.7',
+        'SQLAlchemy >= 1.0, < 1.3',
+        'alembic >= 0.7, < 1.5',
         'pytz',
         'setuptools',
         'zope.component >= 4.0.1, <= 4.4.1',

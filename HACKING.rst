@@ -42,6 +42,25 @@ tests::
     ...
     py33 develop-inst-nodeps...
 
+
+Using docker containers for the tests
+=====================================
+
+Prerequisites
++++++++++++++
+
+* ``createdb`` has to be on $PATH.
+* Run the follwing commands (you might change the passwords used)::
+
+    docker run --name postgres96 -e POSTGRES_PASSWORD=j§V7iJY@1xTG67J@ -d -p 5433:5432 postgres:9.6
+    echo "localhost:5433:*:postgres:j§V7iJY@1xTG67J@" >> ~/.pgpass
+    chmod 600 ~/.pgpass
+
+Run the tests
++++++++++++++
+
+* POSTGRES_PORT=5433 POSTGRES_USER=postgres tox
+
 Documentation
 =============
 

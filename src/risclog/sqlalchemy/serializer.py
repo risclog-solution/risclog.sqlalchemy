@@ -10,7 +10,7 @@ import sqlalchemy.orm
 log = logging.getLogger(__name__)
 
 
-#json encoder for sqlalchemy objects
+# json encoder for sqlalchemy objects
 def sqlalchemy_encode(o):
     columns = [c.key for c in sqlalchemy.orm.class_mapper(o.__class__).columns]
     result = dict((c, getattr(o, c)) for c in columns)
@@ -51,11 +51,13 @@ def encode(o):
             return encoder(o)
     return json._default_encoder._default_orig(o)
 
+
 try:
     import pyramid.renderers
     has_pyramid = True
 except ImportError:
     has_pyramid = False
+
 
 if has_pyramid:
     def json_renderer_factory(*args, **kw):
