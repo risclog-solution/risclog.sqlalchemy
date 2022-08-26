@@ -1,4 +1,4 @@
-from sqlalchemy.sql.expression import between, or_, and_
+from sqlalchemy.sql.expression import and_, between, or_
 
 
 def in_interval(point, left, right):

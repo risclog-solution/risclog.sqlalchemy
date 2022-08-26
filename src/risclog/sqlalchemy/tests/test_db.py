@@ -1,11 +1,12 @@
 import mock
 import pkg_resources
 import pytest
+
 import risclog.sqlalchemy.model
 
 
 def test_register_class_bails_when_registering_same_name_again():
-    from ..db import register_class, _ENGINE_CLASS_MAPPING
+    from ..db import _ENGINE_CLASS_MAPPING, register_class
 
     class Dummy:
         _engine_name = 'foobar'
@@ -23,9 +24,10 @@ def test_register_class_bails_when_registering_same_name_again():
 
 def test_Database_is_able_to_handle_multiple_databases(
         database_1, database_2, request):
-    from ..model import ObjectBase, declarative_base
     from sqlalchemy import Column, Integer
     from sqlalchemy.engine.reflection import Inspector
+
+    from ..model import ObjectBase, declarative_base
 
     class ObjectBase_1(ObjectBase):
         _engine_name = 'db1'
@@ -52,15 +54,16 @@ def test_Database_is_able_to_handle_multiple_databases(
     # Tables are stored in different databases:
     inspector_1 = Inspector.from_engine(database_1.get_engine('db1'))
     assert set(['tmp_functest', 'model_1']) == \
-           set(inspector_1.get_table_names())
+        set(inspector_1.get_table_names())
 
     inspector_2 = Inspector.from_engine(database_2.get_engine('db2'))
     assert set(['tmp_functest', 'model_2']) == \
-           set(inspector_2.get_table_names())
+        set(inspector_2.get_table_names())
 
 
 def test_Database_cannot_be_created_twice(database_1):
     from ..db import Database
+
     # The first time Database is created in fixture:
     with pytest.raises(AssertionError) as err:
         Database()
@@ -87,7 +90,7 @@ def test_register_engine_bails_when_registering_an_engine_for_an_existing_name(
 
 
 def test_get_database_returns_database_utility(database_1):
-    from ..db import get_database, Database
+    from ..db import Database, get_database
     db = get_database(testing=True)
     assert isinstance(db, Database)
 
@@ -110,9 +113,10 @@ def test_assert_db_rev_raises_if_mismatch(database_1):
 
 def test_database_is_detected_automatically_among_several(
         database_1, database_2, request):
+    from sqlalchemy import Column, Integer
+
     from ..db import get_database
     from ..model import ObjectBase, declarative_base
-    from sqlalchemy import Column, Integer
 
     class ObjectBase_1(ObjectBase):
         _engine_name = 'db1'

@@ -1,12 +1,13 @@
-from risclog.sqlalchemy.db import register_class
-from risclog.sqlalchemy.interfaces import IDatabase, Added
-from zope.component._compat import _BLANK
 import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
 import zope.component
 import zope.interface
 import zope.sqlalchemy
+from zope.component._compat import _BLANK
+
+from risclog.sqlalchemy.db import register_class
+from risclog.sqlalchemy.interfaces import Added, IDatabase
 
 
 class ObjectBase(object):

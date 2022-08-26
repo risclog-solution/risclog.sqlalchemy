@@ -1,4 +1,3 @@
-from .model import ObjectBase
 import datetime
 import decimal
 import json
@@ -6,6 +5,7 @@ import logging
 
 import sqlalchemy.orm
 
+from .model import ObjectBase
 
 log = logging.getLogger(__name__)
 

@@ -1,8 +1,10 @@
 import datetime
 import decimal
 import json
+
 import pytest
 import pytz
+
 import risclog.sqlalchemy.serializer
 
 

@@ -1,6 +1,6 @@
-from zope.component._compat import _BLANK
 import zope.interface
 import zope.interface.interfaces
+from zope.component._compat import _BLANK
 
 
 class IDatabase(zope.interface.Interface):

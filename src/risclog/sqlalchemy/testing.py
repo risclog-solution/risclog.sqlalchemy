@@ -1,12 +1,14 @@
-from zope.component._compat import _BLANK
+import unittest
+
 import gocept.testdb
-import risclog.sqlalchemy.db
-import risclog.sqlalchemy.interfaces
 import sqlalchemy
 import sqlalchemy.orm.session
 import transaction
-import unittest
 import zope.component
+from zope.component._compat import _BLANK
+
+import risclog.sqlalchemy.db
+import risclog.sqlalchemy.interfaces
 
 
 def get_db_util():

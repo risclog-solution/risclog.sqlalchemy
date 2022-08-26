@@ -3,9 +3,9 @@
 """Encapsulate sqlalchemy modelling infrastructure.
 """
 
-from setuptools import setup, find_packages
 import glob
 
+from setuptools import find_packages, setup
 
 setup(
     name='risclog.sqlalchemy',
