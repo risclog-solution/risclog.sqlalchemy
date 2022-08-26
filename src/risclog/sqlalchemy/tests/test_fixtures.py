@@ -9,7 +9,7 @@ pytest_plugins = 'risclog.sqlalchemy.fixtures'
 
 
 @pytest.fixture(scope='function')
-def example_model(test_model_factory):
+def example_model(test_model_factory, database_test_livecycle):
     """Create a persisted example object in the database."""
     model = test_model_factory('db1')
     db = risclog.sqlalchemy.db.get_database(testing=True)

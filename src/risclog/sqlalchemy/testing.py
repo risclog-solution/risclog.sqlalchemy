@@ -47,8 +47,9 @@ def tearDownDB(db, name=_BLANK):
         db_util._teardown_utility()
 
 
-def database_fixture_factory(request, prefix, name=_BLANK, schema_path=None,
-                             create_all=False, alembic_location=None):
+def database_fixture_factory(
+        request, prefix, name=_BLANK, schema_path=None,
+        create_all=False, alembic_location=None, template_db_name=None):
     """Factory creating a py.test fixture for a database.
 
     request ... request fixture
@@ -57,6 +58,8 @@ def database_fixture_factory(request, prefix, name=_BLANK, schema_path=None,
     schema_path ... load this schema into the created database
     create_all ... Create all tables etc. in database?
     alembic_location ... Path where alembic migration scripts live.
+    template_db_name ... name of the template_db to be created resp. used as
+                         blueprint for the database
 
     Usage example::
 
@@ -67,7 +70,8 @@ def database_fixture_factory(request, prefix, name=_BLANK, schema_path=None,
     """
     def db_factory():
         return gocept.testdb.PostgreSQL(
-            prefix=prefix, schema_path=schema_path)
+            prefix=prefix, schema_path=schema_path,
+            db_template=template_db_name)
 
     def dropdb():
         tearDownDB(db, name)

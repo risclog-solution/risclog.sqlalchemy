@@ -163,7 +163,8 @@ def test_create_all_marks_alembic_current(database_1, request):
     database_1.assert_database_revision_is_current('db1')
 
 
-def test_update_database_revision_to_current(database_1, request):
+def test_update_database_revision_to_current(
+        database_1, database_test_livecycle, request):
     class TestObject(risclog.sqlalchemy.model.ObjectBase):
         _engine_name = 'db1'
     Object = risclog.sqlalchemy.model.declarative_base(TestObject)
