@@ -1,6 +1,7 @@
 import pytest
-import risclog.sqlalchemy.testing
+
 import risclog.sqlalchemy.serializer
+import risclog.sqlalchemy.testing
 
 
 @pytest.fixture(scope='session')
@@ -24,7 +25,7 @@ def database_test_livecycle(request, database_1, database_2):
 
 @pytest.fixture(scope='class')
 def patched_serializer(request):
-    """Patch pyramid serializer to be able to serialize Decimal and Datetime."""
+    """Patch pyramid serializer to be able to serialize Decimal & Datetime."""
     risclog.sqlalchemy.serializer.patch()
     request.addfinalizer(risclog.sqlalchemy.serializer.unpatch)
 
@@ -40,6 +41,7 @@ def test_model_factory(request):
 
     def factory(engine_name):
         from sqlalchemy import Column, Text
+
         import risclog.sqlalchemy.db
         import risclog.sqlalchemy.model
 

@@ -1,11 +1,14 @@
-from zope.component._compat import _BLANK
+import unittest
+
 import gocept.testdb
-import risclog.sqlalchemy.db
 import sqlalchemy
 import sqlalchemy.orm.session
 import transaction
-import unittest
 import zope.component
+from zope.component._compat import _BLANK
+
+import risclog.sqlalchemy.db
+import risclog.sqlalchemy.interfaces
 
 
 def get_db_util():
@@ -96,8 +99,11 @@ def setUp(managed_tables=None):
 
 
 def tearDown():
+    # SQLAlchemy 1.2 support
     db_util = get_db_util()
-    sqlalchemy.orm.session.close_all_sessions()
+    db_util.session.close_all()
+    # SQLAlchemy 1.3+:
+    # sqlalchemy.orm.session.close_all_sessions()
 
 
 def database_test_livecycle_fixture_factory(request):

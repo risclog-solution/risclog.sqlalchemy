@@ -7,6 +7,8 @@ Change log for risclog.sqlalchemy
 
 - Add support for Python 3.7.
 
+- Use GitHub Actions as CI.
+
 - Drop support for PyPy, PyPy3, Python 3.4 and 3.5.
 
 - Migrate to Github.

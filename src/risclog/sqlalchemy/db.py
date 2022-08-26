@@ -1,10 +1,9 @@
-from zope.component._compat import _BLANK
+import os
+
 import alembic.config
 import alembic.environment
 import alembic.migration
 import alembic.script
-import os
-import risclog.sqlalchemy.interfaces
 import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
@@ -12,7 +11,9 @@ import transaction
 import zope.component
 import zope.interface
 import zope.sqlalchemy
+from zope.component._compat import _BLANK
 
+import risclog.sqlalchemy.interfaces
 
 # Mapping engine name registered using Database.register_engine --> base class
 _ENGINE_CLASS_MAPPING = {}

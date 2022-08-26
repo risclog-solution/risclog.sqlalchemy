@@ -1,9 +1,9 @@
 import pytest
-import risclog.sqlalchemy.db
-import risclog.sqlalchemy.testing
 import sqlalchemy.orm.exc
 import transaction
 
+import risclog.sqlalchemy.db
+import risclog.sqlalchemy.testing
 
 pytest_plugins = 'risclog.sqlalchemy.fixtures'
 
