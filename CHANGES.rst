@@ -14,7 +14,7 @@ Change log for risclog.sqlalchemy
 - Migrate to Github.
 
 - Add the ability for the pytest fixture factory ``database_fixture_factory``
-  to specify a template database.
+  to specify a template database and a database factory class.
 
 
 3.0 (2018-01-16)
