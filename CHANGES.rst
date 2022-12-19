@@ -7,6 +7,8 @@ Change log for risclog.sqlalchemy
 
 - Drop support for Python 3.6.
 
+- Drop support for SQLAlchemy 1.0 and 1.1.
+
 - Add support for Python 3.10 and 3.11.
 
 
