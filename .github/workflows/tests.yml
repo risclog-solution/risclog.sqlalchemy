@@ -30,10 +30,11 @@ jobs:
       matrix:
         config:
         # [Python version, tox env]
-        - ["3.6",   "py36"]
         - ["3.7",   "py37"]
         - ["3.8",   "py38"]
         - ["3.9",   "py39"]
+        - ["3.10",  "py310"]
+        - ["3.11",  "py311"]
         - ["3.8",   "coverage"]
 
     runs-on: ubuntu-20.04
@@ -58,8 +59,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install tox
-        pip install tox-factor
+        pip install 'tox > 4'
     - name: Test
       env:
         POSTGRES_HOST: 0.0.0.0
