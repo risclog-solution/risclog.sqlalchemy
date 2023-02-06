@@ -11,6 +11,8 @@ Change log for risclog.sqlalchemy
 
 - Add support for Python 3.10 and 3.11.
 
+- Restrict supported SQLALchemy to < 2.
+
 
 5.1 (2021-04-28)
 ================
