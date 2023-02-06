@@ -13,7 +13,7 @@ setup(
     version='6.0.dev0',
     python_requires='>=3.7',
     install_requires=[
-        'SQLAlchemy >= 1.0',
+        'SQLAlchemy >= 1.0, < 2',
         'alembic >= 0.7',
         'pytz',
         'setuptools',
