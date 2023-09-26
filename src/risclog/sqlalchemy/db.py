@@ -77,12 +77,16 @@ class RoutingSession(sqlalchemy.orm.Session):
         return session
 
 
-def get_database(testing=False):
+def get_database(testing=False, keep_session=False, expire_on_commit=False):
     """Get or create the database utility."""
+    if testing and not keep_session and not expire_on_commit:
+        # Keep the old testing behaviour by default
+        keep_session = True
+        expire_on_commit = True
     db = zope.component.queryUtility(
         risclog.sqlalchemy.interfaces.IDatabase)
     if db is None:
-        db = Database(testing)
+        db = Database(testing, keep_session, expire_on_commit)
     assert db.testing == testing, \
         'Requested testing status `%s` does not match Database.testing.' % (
             testing)
@@ -92,7 +96,9 @@ def get_database(testing=False):
 @zope.interface.implementer(risclog.sqlalchemy.interfaces.IDatabase)
 class Database:
 
-    def __init__(self, testing=False):
+    def __init__(
+        self, testing=False, keep_session=False, expire_on_commit=False
+    ):
         assert zope.component.queryUtility(
             risclog.sqlalchemy.interfaces.IDatabase) is None, \
             'Cannot create Database twice, use `.get_database()` to get '\
@@ -100,9 +106,11 @@ class Database:
         self._engines = {}
         self.testing = testing
         self.session_factory = sqlalchemy.orm.scoped_session(
-            sqlalchemy.orm.sessionmaker(class_=RoutingSession))
+            sqlalchemy.orm.sessionmaker(
+                class_=RoutingSession,
+                expire_on_commit=expire_on_commit))
         self.zope_transaction_events = zope.sqlalchemy.register(
-            self.session_factory, keep_session=testing)
+            self.session_factory, keep_session=keep_session)
         self._setup_utility()
 
     def register_engine(self, dsn, engine_args={}, name='',

@@ -1,0 +1,8 @@
+# Created by batou. Do not edit manually.
+# appenv-python-preference: 3.7,3.8,3.9
+-e .[test]
+sqlalchemy<1.4
+alembic
+psycopg2-binary
+pytest
+pytest-timeout

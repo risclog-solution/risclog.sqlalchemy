@@ -39,7 +39,7 @@ class SequenceModel(Object):
 @pytest.fixture(scope='session')
 def db(database_3):
     database_3.create_all('db3')
-    return database_3
+    yield database_3
 
 
 def __create_cache(db, extra_settings=None):
@@ -47,10 +47,9 @@ def __create_cache(db, extra_settings=None):
         'PlainModel',
         'LinkedModel',
         'SequenceModel',
-        'KFZVertrag',
     ]
     MODEL_SEQUENCES = {
-        'Wagniskennziffer': (('id', 'sequencemodel_id_seq'),),
+        'Model1': (('id', 'sequencemodel_id_seq'),),
     }
     settings = {
         'save_order': MODEL_SAVE_ORDER,
