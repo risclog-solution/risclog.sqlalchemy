@@ -11,6 +11,7 @@ import pkg_resources
 import pytest
 import risclog.sqlalchemy.model
 import sqlalchemy
+import transaction
 
 
 def test_register_class_bails_when_registering_same_name_again():
@@ -139,7 +140,6 @@ def test_database_is_detected_automatically_among_several(
 
     Model_1.create().persist()
     Model_2.create().persist()
-    import transaction
     transaction.commit()
 
     # When using session.execute, a manual bind is necessary though
