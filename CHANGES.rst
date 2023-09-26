@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-6.0 (unreleased)
+6.0 (2023-09-26)
 ================
 
 - Introduce `ModelCache` that reduces the number of DB requests when dealing
