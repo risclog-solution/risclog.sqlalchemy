@@ -2,10 +2,18 @@
 Change log for risclog.sqlalchemy
 =================================
 
-5.2 (unreleased)
+6.0 (unreleased)
 ================
 
 - Allow specifying `keep_session` and `expire_on_commit`.
+
+- Drop support for Python 3.6.
+
+- Drop support for SQLAlchemy 1.0 and 1.1.
+
+- Add support for Python 3.10 and 3.11.
+
+- Restrict supported SQLALchemy to < 2.
 
 
 5.1 (2021-04-28)

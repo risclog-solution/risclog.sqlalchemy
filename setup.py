@@ -10,10 +10,10 @@ import glob
 
 setup(
     name='risclog.sqlalchemy',
-    version='5.2.dev0',
-    python_requires='>=3.6, <4',
+    version='6.0.dev0',
+    python_requires='>=3.7',
     install_requires=[
-        'SQLAlchemy >= 1.0',
+        'SQLAlchemy >= 1.0, < 2',
         'alembic >= 0.7',
         'pytz',
         'setuptools',
@@ -45,26 +45,27 @@ setup(
     url='https://github.com/gocept/risclog.sqlalchemy',
 
     keywords='sqlalchemy alembic model infrastructure utility',
-    classifiers="""\
-Development Status :: 5 - Production/Stable
-Framework :: Pyramid
-Intended Audience :: Developers
-License :: OSI Approved
-License :: OSI Approved :: Zope Public License
-Natural Language :: English
-Operating System :: OS Independent
-Programming Language :: Python
-Programming Language :: Python :: 3
-Programming Language :: Python :: 3 :: Only
-Programming Language :: Python :: 3.7
-Programming Language :: Python :: 3.8
-Programming Language :: Python :: 3.9
-Programming Language :: Python :: Implementation
-Programming Language :: Python :: Implementation :: CPython
-Topic :: Database
-Topic :: Software Development :: Libraries
-Topic :: Software Development :: Libraries :: Python Modules
-"""[:-1].split('\n'),
+    classifiers=[
+        "Development Status :: 5 - Production/Stable",
+        "Framework :: Pyramid",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved",
+        "License :: OSI Approved :: Zope Public License",
+        "Natural Language :: English",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: Implementation",
+        "Programming Language :: Python :: Implementation :: CPython",
+        "Topic :: Database",
+        "Topic :: Software Development :: Libraries",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+    ],
     description=__doc__.strip(),
     long_description=(
         open('README.rst').read() +
