@@ -5,6 +5,9 @@ Change log for risclog.sqlalchemy
 6.0 (unreleased)
 ================
 
+- Introduce `ModelCache` that reduces the number of DB requests when dealing
+  with huge amounts of sqlalchemy models.
+
 - Allow specifying `keep_session` and `expire_on_commit`.
 
 - Drop support for Python 3.6.
