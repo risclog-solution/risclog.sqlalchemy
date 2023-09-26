@@ -6,11 +6,13 @@ from ..model import ObjectBase
 from ..model import declarative_base
 from sqlalchemy import Column
 from sqlalchemy import Integer
+from sqlalchemy import String
 from unittest import mock
 import pkg_resources
 import pytest
 import risclog.sqlalchemy.model
 import sqlalchemy
+import transaction
 
 
 def test_register_class_bails_when_registering_same_name_again():
@@ -119,13 +121,17 @@ def test_database_is_detected_automatically_among_several(
 
     class ObjectBase_2(ObjectBase):
         _engine_name = 'db2'
-    declarative_base(ObjectBase_2)
+    Base_2 = declarative_base(ObjectBase_2)
+
+    class Model_2(Base_2):
+        id = Column(Integer, primary_key=True)
 
     def tearDown():
         risclog.sqlalchemy.db.unregister_class(Model_1)
     request.addfinalizer(tearDown)
 
     database_1.create_all('db1')
+    database_2.create_all('db2')
 
     db = get_database(testing=True)
     # It used to be necessary to bind the session to the database to be
@@ -133,12 +139,16 @@ def test_database_is_detected_automatically_among_several(
     # case as of SQLAlchemy 1.0.
     assert db.session.query(Model_1).count() == 0
 
+    Model_1.create().persist()
+    Model_2.create().persist()
+    transaction.commit()
+
     # When using session.execute, a manual bind is necessary though
     with pytest.raises(RuntimeError):
         assert db.session.execute('SELECT count(*) FROM model_1').fetchall()
     # Using a bound session leads to a result:
     assert db.session.using_bind('db1').execute(
-        'SELECT count(*) FROM model_1').fetchall() == [(0,)]
+        'SELECT count(*) FROM model_1').fetchall() == [(1,)]
 
 
 def test_create_all_marks_alembic_current(database_1, request):
@@ -169,3 +179,28 @@ def test_update_database_revision_to_current(database_1, request):
         database_1.assert_database_revision_is_current('db1')
     database_1.update_database_revision_to_current('db1')
     database_1.assert_database_revision_is_current('db1')
+
+
+def test_Model_query_can_take_args_for_memory_optimization(
+    database_1, request
+):
+    class TestObject(risclog.sqlalchemy.model.ObjectBase):
+        _engine_name = 'db1'
+    Object = risclog.sqlalchemy.model.declarative_base(TestObject)
+
+    request.addfinalizer(
+        lambda: risclog.sqlalchemy.db.unregister_class(Object))
+
+    class TestObj(Object):
+        id = Column(Integer, primary_key=True)
+        column1 = Column(String)
+        column2 = Column(String)
+
+    database_1.create_all('db1')
+
+    TestObj.create(column1='asdf', column2='bsdf').persist()
+
+    obj = TestObj.query('column1').first()
+    assert obj.column1 == 'asdf'
+    with pytest.raises(AttributeError):
+        obj.column2

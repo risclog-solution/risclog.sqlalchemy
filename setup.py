@@ -17,6 +17,7 @@ setup(
         'alembic >= 0.7',
         'pytz',
         'setuptools',
+        'transaction',
         'zope.component >= 4.0.1',
         'zope.interface',
         'zope.sqlalchemy >= 1.3',
