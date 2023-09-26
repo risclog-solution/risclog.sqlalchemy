@@ -184,15 +184,14 @@ def test_update_database_revision_to_current(database_1, request):
 def test_Model_query_can_take_args_for_memory_optimization(
     database_1, request
 ):
-
-    class ObjectBase_1(ObjectBase):
+    class TestObject(risclog.sqlalchemy.model.ObjectBase):
         _engine_name = 'db1'
-    Base_1 = declarative_base(ObjectBase_1)
+    Object = risclog.sqlalchemy.model.declarative_base(TestObject)
 
-    class Model_1(Base_1):
-        id = Column(Integer, primary_key=True)
+    request.addfinalizer(
+        lambda: risclog.sqlalchemy.db.unregister_class(Object))
 
-    class TestObj(Base_1):
+    class TestObj(Object):
         id = Column(Integer, primary_key=True)
         column1 = Column(String)
         column2 = Column(String)
@@ -203,4 +202,5 @@ def test_Model_query_can_take_args_for_memory_optimization(
 
     obj = TestObj.query('column1').first()
     assert obj.column1 == 'asdf'
-    assert obj.column2 is None
+    with pytest.raises(AttributeError):
+        obj.column2

@@ -20,27 +20,12 @@ Developing risclog.sqlalchemy
 :Current change log:
     https://github.com/gocept/risclog.sqlalchemy/blob/master/CHANGES.rst
 
-Buildout configuration
-======================
 
-This package ships with a minimum buildout config which allows to run the
-tests::
+Running tests
+=============
 
-    $ python bootstrap.py
-    $ bin/buildout
-    $ bin/test
+Simply run `./pytest` in the root of the repository.
 
-Using Tox
-=========
-
-``risclog.sqlalchemy`` ships with a tox configuration that allows to run all
-tests against all supported python versions. You will need ``tox`` to run those
-tests::
-
-    $ tox
-    py36 develop-inst-nodeps...
-    ...
-    py39 develop-inst-nodeps...
 
 Documentation
 =============
