@@ -6,6 +6,7 @@ from ..model import ObjectBase
 from ..model import declarative_base
 from sqlalchemy import Column
 from sqlalchemy import Integer
+from sqlalchemy import String
 from unittest import mock
 import pkg_resources
 import pytest
@@ -178,3 +179,28 @@ def test_update_database_revision_to_current(database_1, request):
         database_1.assert_database_revision_is_current('db1')
     database_1.update_database_revision_to_current('db1')
     database_1.assert_database_revision_is_current('db1')
+
+
+def test_Model_query_can_take_args_for_memory_optimization(
+    database_1, request
+):
+
+    class ObjectBase_1(ObjectBase):
+        _engine_name = 'db1'
+    Base_1 = declarative_base(ObjectBase_1)
+
+    class Model_1(Base_1):
+        id = Column(Integer, primary_key=True)
+
+    class TestObj(Base_1):
+        id = Column(Integer, primary_key=True)
+        column1 = Column(String)
+        column2 = Column(String)
+
+    database_1.create_all('db1')
+
+    TestObj.create(column1='asdf', column2='bsdf').persist()
+
+    obj = TestObj.query('column1').first()
+    assert obj.column1 == 'asdf'
+    assert obj.column2 is None

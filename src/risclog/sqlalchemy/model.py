@@ -52,6 +52,11 @@ class ObjectBase:
 
     @classmethod
     def query(cls, *args):
+        """ Return a query object for this class.
+
+        `args` may be a list of attributes to select from the query for
+        memory optimization.
+        """
         db = zope.component.getUtility(IDatabase)
         if args:
             selects = list(getattr(cls, a) for a in args)
