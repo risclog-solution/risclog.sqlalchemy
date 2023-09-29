@@ -97,6 +97,7 @@ def setUp(managed_tables=None):
             db_util.empty(engine, empty_alembic_version=True)
     else:
         for engine_name, tables in managed_tables.values():
+            engine = db_util.get_engine(engine_name)
             db_util.empty(engine, tables)
 
 

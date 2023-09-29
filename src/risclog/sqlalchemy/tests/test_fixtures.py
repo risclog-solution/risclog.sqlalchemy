@@ -28,4 +28,4 @@ def test_fixtures__database__selenium_testing__2(
 ):
     """It removes the session if database__selenium_testing is used ."""
     with pytest.raises(sqlalchemy.orm.exc.DetachedInstanceError):
-        example_model.foo == 'bar'
+        example_model.foo = 'bar'
