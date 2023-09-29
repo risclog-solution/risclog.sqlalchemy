@@ -60,3 +60,33 @@ jobs:
         POSTGRES_HOST: 0.0.0.0
         POSTGRES_USER: postgres
       run: ./pytest
+    - name: Upload coverage RAW data
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-data
+        path: ".coverage*"
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: pytest.xml
+
+  coverage:
+    needs: test
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/coverage.yml@master
+    with:
+      min_coverage: 95
+
+  pre-commit:
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/pre_commit.yml@master
+
+  sonarqube:
+    needs: coverage
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/sonarqube.yml@master
+    secrets:
+      SONARQUBETOKEN: ${{ secrets.SONARQUBETOKEN }}
+
+  publish-test-results:
+    needs: test
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/publish_test_results.yml@master

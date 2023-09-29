@@ -1,36 +1,79 @@
----
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
 repos:
-    - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.4.0
-      hooks:
-          - id: trailing-whitespace
-          - id: end-of-file-fixer
-          - id: fix-encoding-pragma
-            args: [--remove]
-          - id: check-yaml
-          - id: debug-statements
-            language_version: python3
-    - repo: https://github.com/PyCQA/flake8
-      rev: 6.1.0
-      hooks:
-          - id: flake8
-            language_version: python3
-            additional_dependencies: [flake8-typing-imports==1.14.0]
-    - repo: https://github.com/hhatto/autopep8
-      rev: v2.0.4
-      hooks:
-          - id: autopep8
-    - repo: https://github.com/PyCQA/isort
-      rev: 5.12.0
-      hooks:
-      - id: isort
-        args: [--filter-files]
-        files: \.py$
-    - repo: local
-      hooks:
-          - id: rst
-            name: rst
-            entry: rst-lint --encoding utf-8
-            files: .rst
-            language: python
-            additional_dependencies: [pygments, restructuredtext_lint]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.4.0
+    hooks:
+
+    # These are the most critical checks.
+    #
+    - id: check-ast
+
+    # Some basic sanitization.
+    #
+    - id: trailing-whitespace
+    - id: end-of-file-fixer
+    - id: double-quote-string-fixer
+    - id: check-docstring-first
+    - id: mixed-line-ending
+      args: [--fix=lf]
+    - id: debug-statements
+
+    # Checking data formats.
+    #
+    - id: check-yaml
+    - id: check-json
+    - id: check-toml
+    - id: check-xml
+
+    # Check for secrets.
+    #
+    # - id: check-private-key
+    # - id: detect-aws-credentials
+
+    # Try to catch some faux-pas.
+    #
+    # - id: no-commit-to-branch
+    #   args: [--branch, master]
+    - id: check-added-large-files
+      args: [--maxkb=1000]
+    - id: check-merge-conflict
+    - id: check-symlinks
+
+    # Try to catch some more obscure things.
+    #
+    - id: check-executables-have-shebangs
+    - id: check-byte-order-marker
+    - id: check-case-conflict
+    - id: fix-encoding-pragma
+      args: [--remove]
+
+    # This checks that all links to our VCS are permalinks. How oddly specific!
+    - id: check-vcs-permalinks
+
+  - repo: https://github.com/pycqa/flake8
+    rev: '4.0.1'
+    hooks:
+      - id: flake8
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.9.0
+    hooks:
+    - id: pyupgrade
+  - repo: https://github.com/asottile/seed-isort-config
+    rev: v2.2.0
+    hooks:
+    - id: seed-isort-config
+  - repo: https://github.com/pre-commit/mirrors-isort
+    rev: v5.7.0  # pick the isort version you'd like to use from https://github.com/pre-commit/mirrors-isort/releases
+    hooks:
+    - id: isort
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+    - id: black
+  - repo: https://github.com/mgedmin/check-manifest
+    rev: '0.46'
+    hooks:
+    - id: check-manifest
+      args: [--no-build-isolation]
