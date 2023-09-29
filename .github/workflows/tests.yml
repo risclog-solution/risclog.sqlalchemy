@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  tests:
+  test:
     services:
       postgres:
         image: postgres
