@@ -22,3 +22,8 @@ recursive-include doc *.py
 recursive-include doc *.txt
 recursive-include src *.mako
 recursive-include src *.py
+
+exclude *.lock
+exclude .isort.cfg
+exclude appenv
+exclude pytest

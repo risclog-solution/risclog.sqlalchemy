@@ -1,12 +1,11 @@
-from risclog.sqlalchemy.db import register_class
-from risclog.sqlalchemy.interfaces import Added
-from risclog.sqlalchemy.interfaces import IDatabase
 import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
 import zope.component
 import zope.interface
 import zope.sqlalchemy
+from risclog.sqlalchemy.db import register_class
+from risclog.sqlalchemy.interfaces import Added, IDatabase
 
 
 class ObjectBase:
@@ -39,6 +38,7 @@ class ObjectBase:
     def __json__(self, request):
         """Returns json serializable representation of this object."""
         import risclog.sqlalchemy.serializer  # prevent circular import
+
         return risclog.sqlalchemy.serializer.sqlalchemy_encode(self)
 
     def persist(self):
@@ -52,7 +52,7 @@ class ObjectBase:
 
     @classmethod
     def query(cls, *args):
-        """ Return a query object for this class.
+        """Return a query object for this class.
 
         `args` may be a list of attributes to select from the query for
         memory optimization.
@@ -73,8 +73,10 @@ class ObjectBase:
 
 
 class ReflectedObjectBase(
-        ObjectBase, sqlalchemy.ext.declarative.DeferredReflection):
+    ObjectBase, sqlalchemy.ext.declarative.DeferredReflection
+):
     pass
+
 
 # Reflection may (have to) happen before all model classes are imported. (We
 # might import the whole model before doing reflection but we don't want to
@@ -83,7 +85,6 @@ class ReflectedObjectBase(
 
 
 class EnsureDeferredReflection(sqlalchemy.ext.declarative.DeclarativeMeta):
-
     def __init__(cls, name, bases, dct):
         super().__init__(name, bases, dct)
         db = zope.component.queryUtility(IDatabase)

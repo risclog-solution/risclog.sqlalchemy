@@ -1,11 +1,12 @@
-from risclog.sqlalchemy.model import ObjectBase
-from sqlalchemy.inspection import inspect
-from sqlalchemy.orm import attributes
 import csv
 import gc
 import io
-import sqlalchemy
 import sys
+
+import sqlalchemy
+from risclog.sqlalchemy.model import ObjectBase
+from sqlalchemy.inspection import inspect
+from sqlalchemy.orm import attributes
 
 
 class MultipleObjectsFoundException(Exception):
@@ -49,18 +50,18 @@ class ModelCache:
     """
 
     def __init__(
-            self,
-            save_order,
-            sequences,
-            session,
-            engine_name,
-            prefetch=None,
-            preload_models=True,
-            preload_models_data={},
-            preload_models_filter={},
-            logger=None,
-            use_copy=False,
-            check_memory_usage=False,
+        self,
+        save_order,
+        sequences,
+        session,
+        engine_name,
+        prefetch=None,
+        preload_models=True,
+        preload_models_data={},
+        preload_models_filter={},
+        logger=None,
+        use_copy=False,
+        check_memory_usage=False,
     ):
         """
         Args:
@@ -94,6 +95,7 @@ class ModelCache:
 
         if check_memory_usage:
             from guppy import hpy
+
             self.hp = hpy()
             self.hp.setrelheap()
 
@@ -104,12 +106,12 @@ class ModelCache:
         h = self.hp.heap()
         return h.size
 
-    def _sizeof_fmt(self, num, suffix="B"):
-        for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
+    def _sizeof_fmt(self, num, suffix='B'):
+        for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
             if abs(num) < 1024.0:
-                return f"{num:3.1f} {unit}{suffix}"
+                return f'{num:3.1f} {unit}{suffix}'
             num /= 1024.0
-        return f"{num:.1f}Yi{suffix}"
+        return f'{num:.1f}Yi{suffix}'
 
     def log_memory_usage(self):
         if not hasattr(self, 'hp'):
@@ -197,8 +199,11 @@ class ModelCache:
         if session is None:
             session = self.session
         if cursor is None and self._use_copy:
-            cursor = self.session.using_bind(
-                self._engine_name).connection().connection.cursor()
+            cursor = (
+                self.session.using_bind(self._engine_name)
+                .connection()
+                .connection.cursor()
+            )
 
         self._log('debug', 'Flushing model cache.')
         self._assign_sequences()
@@ -213,7 +218,8 @@ class ModelCache:
                 continue
 
             self._deregister_change_handler(
-                type(objects[0]), self._instance_change_handler)
+                type(objects[0]), self._instance_change_handler
+            )
             new_objects, updated_objects = [], []
 
             for object in objects:
@@ -254,7 +260,8 @@ class ModelCache:
             file = io.StringIO()
             writer = csv.DictWriter(file, table.columns.keys())
             columns = [
-                c for c in model.c.items()
+                c
+                for c in model.c.items()
                 if c[1].table == table or c[1].primary_key
             ]
 

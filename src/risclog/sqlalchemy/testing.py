@@ -1,27 +1,27 @@
+import unittest
+
 import gocept.testdb
 import risclog.sqlalchemy.db
 import sqlalchemy
 import sqlalchemy.orm.session
 import transaction
-import unittest
 import zope.component
 
 
 def get_db_util():
     """Get the database utility registered with `name`."""
-    return zope.component.queryUtility(
-        risclog.sqlalchemy.interfaces.IDatabase)
+    return zope.component.queryUtility(risclog.sqlalchemy.interfaces.IDatabase)
 
 
 def setUpDB(factory, name='', alembic_location=None):
     db = factory()
     if db.exists:
-        raise ValueError(
-            f'Database {db.db_name}@{db.db_host} already exists!')
+        raise ValueError(f'Database {db.db_name}@{db.db_host} already exists!')
     db.create()
     db_util = risclog.sqlalchemy.db.get_database(testing=True)
     db_util.register_engine(
-        db.dsn, name=name, alembic_location=alembic_location)
+        db.dsn, name=name, alembic_location=alembic_location
+    )
     return db
 
 
@@ -43,8 +43,14 @@ def tearDownDB(db, name=''):
         db_util._teardown_utility()
 
 
-def database_fixture_factory(request, prefix, name='', schema_path=None,
-                             create_all=False, alembic_location=None):
+def database_fixture_factory(
+    request,
+    prefix,
+    name='',
+    schema_path=None,
+    create_all=False,
+    alembic_location=None,
+):
     """Factory creating a py.test fixture for a database.
 
     request ... request fixture
@@ -61,9 +67,9 @@ def database_fixture_factory(request, prefix, name='', schema_path=None,
             return database_fixture_factory(request, 'rl.<prefix>')
 
     """
+
     def db_factory():
-        return gocept.testdb.PostgreSQL(
-            prefix=prefix, schema_path=schema_path)
+        return gocept.testdb.PostgreSQL(prefix=prefix, schema_path=schema_path)
 
     def dropdb():
         tearDownDB(db, name)
@@ -123,7 +129,6 @@ def database_test_livecycle_fixture_factory(request):
 
 
 class TestCase(unittest.TestCase):
-
     def setUp(self, managed_tables=None):
         setUp(managed_tables)
 

@@ -4,7 +4,6 @@ import risclog.sqlalchemy.testing
 import sqlalchemy.orm.exc
 import transaction
 
-
 pytest_plugins = 'risclog.sqlalchemy.fixtures'
 
 
@@ -25,7 +24,8 @@ def test_fixtures__database__selenium_testing__1(database_1, example_model):
 
 
 def test_fixtures__database__selenium_testing__2(
-        database_1, database__selenium_testing, example_model):
+    database_1, database__selenium_testing, example_model
+):
     """It removes the session if database__selenium_testing is used ."""
     with pytest.raises(sqlalchemy.orm.exc.DetachedInstanceError):
         example_model.foo == 'bar'

@@ -1,10 +1,11 @@
-from .model import ObjectBase
 import datetime
 import decimal
 import json
 import logging
+
 import sqlalchemy.orm
 
+from .model import ObjectBase
 
 log = logging.getLogger(__name__)
 
@@ -17,15 +18,19 @@ def sqlalchemy_encode(o):
 
 
 def patch():
-    log.info('Applying monkey patch: json '
-             'default encoder for sqlalchemy models, datetime and decimal.')
+    log.info(
+        'Applying monkey patch: json '
+        'default encoder for sqlalchemy models, datetime and decimal.'
+    )
     json._default_encoder._default_orig = json._default_encoder.default
     json._default_encoder.default = encode
 
 
 def unpatch():
-    log.info('Un-applying monkey patch: json '
-             'default encoder for sqlalchemy models, datetime and decimal.')
+    log.info(
+        'Un-applying monkey patch: json '
+        'default encoder for sqlalchemy models, datetime and decimal.'
+    )
     json._default_encoder.default = json._default_encoder._default_orig
     del json._default_encoder._default_orig
 
@@ -38,10 +43,12 @@ def decimal_encode(o, request=None):
     return str(o)
 
 
-ENCODERS = {ObjectBase: sqlalchemy_encode,
-            datetime.date: datetime_encode,
-            datetime.datetime: datetime_encode,
-            decimal.Decimal: decimal_encode}
+ENCODERS = {
+    ObjectBase: sqlalchemy_encode,
+    datetime.date: datetime_encode,
+    datetime.datetime: datetime_encode,
+    decimal.Decimal: decimal_encode,
+}
 
 
 def encode(o):
@@ -53,12 +60,14 @@ def encode(o):
 
 try:
     import pyramid.renderers
+
     has_pyramid = True
 except ImportError:  # pragma: no cover
     has_pyramid = False
 
 
 if has_pyramid:
+
     def json_renderer_factory(*args, **kw):
         renderer = pyramid.renderers.JSON(*args, **kw)
         for klass, encoder in ENCODERS.items():

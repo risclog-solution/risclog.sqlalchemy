@@ -1,8 +1,9 @@
 # Created by batou. Do not edit manually.
 # appenv-python-preference: 3.7,3.8,3.9
 -e .[test]
-sqlalchemy<1.4
+sqlalchemy<2.0
 alembic
 psycopg2-binary
 pytest
 pytest-timeout
+pytest-cov

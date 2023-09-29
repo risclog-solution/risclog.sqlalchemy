@@ -1,12 +1,9 @@
-from .. import model
-from ..cache import ModelCache
-from ..cache import MultipleObjectsFoundException
-from sqlalchemy import Column
-from sqlalchemy import ForeignKey
-from sqlalchemy import Integer
-from sqlalchemy import String
 import pytest
 import sqlalchemy
+from sqlalchemy import Column, ForeignKey, Integer, String
+
+from .. import model
+from ..cache import ModelCache, MultipleObjectsFoundException
 
 
 class TestObject(model.ObjectBase):
@@ -59,9 +56,7 @@ def __create_cache(db, extra_settings=None):
     }
     if extra_settings is not None:
         settings.update(extra_settings)
-    cache = ModelCache(
-        **settings
-    )
+    cache = ModelCache(**settings)
     return cache
 
 
@@ -77,16 +72,36 @@ def copy_cache(db):
 
 class TestFindGet:
     def test_find_uncached_object(self, cache):
-        svg = PlainModel.create(id='1', )
+        svg = PlainModel.create(
+            id='1',
+        )
 
-        assert svg == cache.get(PlainModel, id=svg.id, )
-        assert svg == cache.find(PlainModel, id=svg.id, )[0]
+        assert svg == cache.get(
+            PlainModel,
+            id=svg.id,
+        )
+        assert (
+            svg
+            == cache.find(
+                PlainModel,
+                id=svg.id,
+            )[0]
+        )
 
     def test_find_cached_object(self, cache):
         svg = cache.create(PlainModel, id='1')
 
-        assert svg == cache.get(PlainModel, id=svg.id, )
-        assert svg == cache.find(PlainModel, id=svg.id, )[0]
+        assert svg == cache.get(
+            PlainModel,
+            id=svg.id,
+        )
+        assert (
+            svg
+            == cache.find(
+                PlainModel,
+                id=svg.id,
+            )[0]
+        )
 
     def test_find_multiple_objects(self, cache):
         svg1 = PlainModel.create(id='1', titel='')
@@ -106,30 +121,50 @@ class TestFindGet:
             cache.get(PlainModel, titel='')
 
     def test_non_existent_object(self, cache):
-        PlainModel.create(id='1', )
+        PlainModel.create(
+            id='1',
+        )
         cache.create(
-            PlainModel, id='2',
+            PlainModel,
+            id='2',
         )
 
-        assert None is cache.get(PlainModel, id='3', )
-        assert [] == cache.find(PlainModel, id='3', )
+        assert None is cache.get(
+            PlainModel,
+            id='3',
+        )
+        assert [] == cache.find(
+            PlainModel,
+            id='3',
+        )
 
     def test_attribute_update(self, cache):
         svg = cache.create(PlainModel, id='1')
         cache.get(
-            PlainModel, id=svg.id,
+            PlainModel,
+            id=svg.id,
         )
 
         svg.id = '2'
 
-        assert svg == cache.get(PlainModel, id=svg.id, )
-        assert svg == cache.find(PlainModel, id=svg.id, )[0]
+        assert svg == cache.get(
+            PlainModel,
+            id=svg.id,
+        )
+        assert (
+            svg
+            == cache.find(
+                PlainModel,
+                id=svg.id,
+            )[0]
+        )
 
 
 class TestCreate:
     def test_create_object(self, db, cache):
         cache.create(
-            PlainModel, id='1',
+            PlainModel,
+            id='1',
         )
         cache.save_changes(db.session)
 
@@ -137,7 +172,8 @@ class TestCreate:
 
     def test_create_object_with_copy(self, db, copy_cache):
         copy_cache.create(
-            PlainModel, id='1',
+            PlainModel,
+            id='1',
         )
         copy_cache.save_changes(db.session)
 
@@ -146,21 +182,32 @@ class TestCreate:
 
 class TestFlush:
     def test_creation(self, db, cache):
-        svg = cache.create(PlainModel, id='1', )
+        svg = cache.create(
+            PlainModel,
+            id='1',
+        )
         cache.save_changes(db.session)
 
         assert 1 == PlainModel.query().filter(PlainModel.id == svg.id).count()
 
     def test_creation_with_copy(self, db, copy_cache):
-        svg = copy_cache.create(PlainModel, id='1', )
+        svg = copy_cache.create(
+            PlainModel,
+            id='1',
+        )
         copy_cache.save_changes(db.session)
 
         assert 1 == PlainModel.query().filter(PlainModel.id == svg.id).count()
 
     def test_update(self, db, cache):
         old_id, new_id = '1', '42'
-        PlainModel.create(id=old_id, )
-        svg = cache.get(PlainModel, id=old_id, )
+        PlainModel.create(
+            id=old_id,
+        )
+        svg = cache.get(
+            PlainModel,
+            id=old_id,
+        )
 
         svg.id = new_id
         cache.save_changes(db.session)
@@ -170,7 +217,8 @@ class TestFlush:
 
     def test_sequence_set_if_missing(self, db, cache):
         cache.create(
-            SequenceModel, id=None,
+            SequenceModel,
+            id=None,
         )
         cache.save_changes(db.session)
         wkz = SequenceModel.query().one()
@@ -180,7 +228,8 @@ class TestFlush:
     def test_existing_sequence_ignored(self, db, cache):
         id = 42
         cache.create(
-            SequenceModel, id=id,
+            SequenceModel,
+            id=id,
         )
         cache.save_changes(db.session)
         wkz = SequenceModel.query().one()
@@ -199,9 +248,12 @@ class TestFlush:
 
 class TestIndex:
     def test_find_populates_indices(self, cache):
-        svg = PlainModel.create(id='1', )
+        svg = PlainModel.create(
+            id='1',
+        )
         cache.find(
-            PlainModel, id=svg.id,
+            PlainModel,
+            id=svg.id,
         )
         cache.find(PlainModel, id=svg.id, titel='')
 
@@ -212,9 +264,12 @@ class TestIndex:
         ]
 
     def test_get_populates_indices(self, cache):
-        svg = PlainModel.create(id='1', )
+        svg = PlainModel.create(
+            id='1',
+        )
         cache.get(
-            PlainModel, id=svg.id,
+            PlainModel,
+            id=svg.id,
         )
         cache.get(PlainModel, id=svg.id, titel='')
 
@@ -226,9 +281,12 @@ class TestIndex:
 
     def test_attribute_changes_update_indices(self, cache):
         old_id, new_id = '1', '2'
-        svg = PlainModel.create(id=old_id, )
+        svg = PlainModel.create(
+            id=old_id,
+        )
         cache.get(
-            PlainModel, id=svg.id,
+            PlainModel,
+            id=svg.id,
         )
 
         svg.id = new_id
@@ -242,7 +300,8 @@ class TestIndex:
         svg1 = PlainModel.create(id='1', titel=old_titel)
         svg2 = PlainModel.create(id='2', titel=old_titel)
         cache.find(
-            PlainModel, titel=old_titel,
+            PlainModel,
+            titel=old_titel,
         )
 
         svg1.titel = new_titel

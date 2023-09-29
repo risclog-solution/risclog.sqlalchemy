@@ -1,8 +1,9 @@
+import os
+
 import alembic.config
 import alembic.environment
 import alembic.migration
 import alembic.script
-import os
 import risclog.sqlalchemy.interfaces
 import sqlalchemy
 import sqlalchemy.ext.declarative
@@ -12,15 +13,15 @@ import zope.component
 import zope.interface
 import zope.sqlalchemy
 
-
 # Mapping engine name registered using Database.register_engine --> base class
 _ENGINE_CLASS_MAPPING = {}
 
 
 def assert_engine_not_registered(name, mapping):
     """Ensure a consistent error message."""
-    assert name not in mapping, \
-        f'An engine for name `{name}` is already registered.'
+    assert (
+        name not in mapping
+    ), f'An engine for name `{name}` is already registered.'
 
 
 def register_class(class_):
@@ -51,23 +52,25 @@ class RoutingSession(sqlalchemy.orm.Session):
         if bind:
             return bind
         db_util = zope.component.getUtility(
-            risclog.sqlalchemy.interfaces.IDatabase)
+            risclog.sqlalchemy.interfaces.IDatabase
+        )
         if self._name:
             # Engine was set using self.using_bind:
             return db_util.get_engine(self._name)
         if not mapper:
             if len(_ENGINE_CLASS_MAPPING) == 1:
                 return db_util.get_engine(
-                    list(_ENGINE_CLASS_MAPPING.keys())[0])
+                    list(_ENGINE_CLASS_MAPPING.keys())[0]
+                )
             raise RuntimeError(
-                "Don't know how to determine engine, no mapper.")
+                "Don't know how to determine engine, no mapper."
+            )
 
         for engine_name, class_ in _ENGINE_CLASS_MAPPING.items():
             if issubclass(mapper.class_, class_):
                 return db_util.get_engine(engine_name)
 
-        raise RuntimeError(
-            f"Did not find an engine for {mapper.class_}")
+        raise RuntimeError(f'Did not find an engine for {mapper.class_}')
 
     def using_bind(self, name):
         """Select an engine name if not using mappers."""
@@ -83,45 +86,55 @@ def get_database(testing=False, keep_session=False, expire_on_commit=False):
         # Keep the old testing behaviour by default
         keep_session = True
         expire_on_commit = True
-    db = zope.component.queryUtility(
-        risclog.sqlalchemy.interfaces.IDatabase)
+    db = zope.component.queryUtility(risclog.sqlalchemy.interfaces.IDatabase)
     if db is None:
         db = Database(testing, keep_session, expire_on_commit)
-    assert db.testing == testing, \
-        'Requested testing status `%s` does not match Database.testing.' % (
-            testing)
+    assert (
+        db.testing == testing
+    ), 'Requested testing status `%s` does not match Database.testing.' % (
+        testing
+    )
     return db
 
 
 @zope.interface.implementer(risclog.sqlalchemy.interfaces.IDatabase)
 class Database:
-
     def __init__(
         self, testing=False, keep_session=False, expire_on_commit=False
     ):
-        assert zope.component.queryUtility(
-            risclog.sqlalchemy.interfaces.IDatabase) is None, \
-            'Cannot create Database twice, use `.get_database()` to get '\
+        assert (
+            zope.component.queryUtility(
+                risclog.sqlalchemy.interfaces.IDatabase
+            )
+            is None
+        ), (
+            'Cannot create Database twice, use `.get_database()` to get '
             'the instance.'
+        )
         self._engines = {}
         self.testing = testing
         self.session_factory = sqlalchemy.orm.scoped_session(
             sqlalchemy.orm.sessionmaker(
-                class_=RoutingSession,
-                expire_on_commit=expire_on_commit))
+                class_=RoutingSession, expire_on_commit=expire_on_commit
+            )
+        )
         self.zope_transaction_events = zope.sqlalchemy.register(
-            self.session_factory, keep_session=keep_session)
+            self.session_factory, keep_session=keep_session
+        )
         self._setup_utility()
 
-    def register_engine(self, dsn, engine_args={}, name='',
-                        alembic_location=None):
+    def register_engine(
+        self, dsn, engine_args={}, name='', alembic_location=None
+    ):
         assert_engine_not_registered(name, self._engines)
-        engine_args['echo'] = bool(int(os.environ.get(
-            'ECHO_SQLALCHEMY_QUERIES', '0')))
+        engine_args['echo'] = bool(
+            int(os.environ.get('ECHO_SQLALCHEMY_QUERIES', '0'))
+        )
         engine = sqlalchemy.create_engine(dsn, **engine_args)
         self._verify_engine(engine)
         self._engines[name] = dict(
-            engine=engine, alembic_location=alembic_location)
+            engine=engine, alembic_location=alembic_location
+        )
         # Some model classes may already have been constructed without having
         # had access to a db engine so far, so give them a chance to do the
         # reflection now.
@@ -148,15 +161,16 @@ class Database:
         """Create all tables etc. for an engine."""
         engine = self._engines[engine_name]
         _ENGINE_CLASS_MAPPING[engine_name].metadata.create_all(
-            engine['engine'])
+            engine['engine']
+        )
 
         # mark the database to be in the latest revision
         location = engine['alembic_location']
         if location:
             with alembic_context(engine['engine'], location) as ac:
                 ac.migration_context.stamp(
-                    ac.script,
-                    ac.script.get_current_head())
+                    ac.script, ac.script.get_current_head()
+                )
         if create_defaults:
             self.create_defaults(engine_name)
 
@@ -173,25 +187,27 @@ class Database:
         # Step 1: Try to identify a testing table
         conn = engine.connect()
         try:
-            conn.execute("SELECT * FROM tmp_functest")
+            conn.execute('SELECT * FROM tmp_functest')
         except sqlalchemy.exc.DatabaseError:
             db_is_testing = False
         else:
             db_is_testing = True
         conn.invalidate()
 
-        if (self.testing and db_is_testing):
+        if self.testing and db_is_testing:
             # We're running as a test and it is a test dabase. Continue
             return
-        if (not self.testing and not db_is_testing):
+        if not self.testing and not db_is_testing:
             # We're running as a production system and we have a production
             # database. Continue.
             return
 
         # We're not in a valid state. Bail out.
-        raise SystemExit("Not working against correct database (live vs "
-                         "testing). Refusing to set up database connection "
-                         "to {}.".format(engine.url))
+        raise SystemExit(
+            'Not working against correct database (live vs '
+            'testing). Refusing to set up database connection '
+            'to {}.'.format(engine.url)
+        )
 
     def assert_database_revision_is_current(self, engine_name=''):
         def assert_revision(ac, head_rev, db_rev):
@@ -200,7 +216,9 @@ class Database:
                     'Database revision {} of engine "{}" does not match '
                     'current revision {}.\nMaybe you want to call '
                     '`bin/alembic upgrade head`.'.format(
-                        db_rev, engine_name, head_rev))
+                        db_rev, engine_name, head_rev
+                    )
+                )
 
         self._run_in_alembic_context(assert_revision, engine_name)
 
@@ -208,6 +226,7 @@ class Database:
         def upgrade_revision(ac, head_rev, db_rev):
             if head_rev != db_rev:
                 ac.upgrade(head_rev)
+
         self._run_in_alembic_context(upgrade_revision, engine_name)
 
     @property
@@ -229,9 +248,15 @@ class Database:
     def _teardown_utility(self):
         zope.component.getGlobalSiteManager().unregisterUtility(self)
 
-    def empty(self, engine, table_names=None, cascade=False,
-              restart_sequences=True,
-              empty_alembic_version=False, commit=True):
+    def empty(
+        self,
+        engine,
+        table_names=None,
+        cascade=False,
+        restart_sequences=True,
+        empty_alembic_version=False,
+        commit=True,
+    ):
         transaction.abort()
         if table_names is None:
             inspector = sqlalchemy.inspect(engine)
@@ -259,8 +284,10 @@ class Database:
             'TRUNCATE {} {} {}'.format(
                 tables,
                 'RESTART IDENTITY' if restart_sequences else '',
-                'CASCADE' if cascade else ''),
-            bind=engine)
+                'CASCADE' if cascade else '',
+            ),
+            bind=engine,
+        )
         zope.sqlalchemy.mark_changed(self.session)
         if commit:
             transaction.commit()
@@ -285,7 +312,6 @@ class Database:
 
 
 class alembic_context:
-
     def __init__(self, engine, script_location):
         self.engine = engine
         self.script_location = script_location
@@ -302,22 +328,23 @@ class alembic_context:
 
 
 class AlembicContext:
-
     def __init__(self, conn, script_location):
         self.conn = conn
         self.config = alembic.config.Config()
         self.config.set_main_option('script_location', script_location)
         self.migration_context = alembic.migration.MigrationContext.configure(
-            conn)
+            conn
+        )
         self.script = alembic.script.ScriptDirectory.from_config(self.config)
 
     def upgrade(self, dest_rev):
         """Upgrade from current to `dest_rev`."""
+
         def upgrade_fn(rev, context):
             return self.script._upgrade_revs(dest_rev, rev)
 
         with alembic.environment.EnvironmentContext(
-                self.config, self.script, fn=upgrade_fn,
-                destination_rev=dest_rev) as ec:
+            self.config, self.script, fn=upgrade_fn, destination_rev=dest_rev
+        ) as ec:
             ec.configure(self.conn)
             ec.run_migrations()

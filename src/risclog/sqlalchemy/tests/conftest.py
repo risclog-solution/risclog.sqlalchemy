@@ -6,26 +6,30 @@ import risclog.sqlalchemy.testing
 @pytest.fixture(scope='session')
 def database_1(request):
     return risclog.sqlalchemy.testing.database_fixture_factory(
-        request, 'risclog.sqlalchemy.db1', 'db1')
+        request, 'risclog.sqlalchemy.db1', 'db1'
+    )
 
 
 @pytest.fixture(scope='session')
 def database_2(request):
     return risclog.sqlalchemy.testing.database_fixture_factory(
-        request, 'risclog.sqlalchemy.db2', 'db2')
+        request, 'risclog.sqlalchemy.db2', 'db2'
+    )
 
 
 @pytest.fixture(scope='session')
 def database_3(request):
     return risclog.sqlalchemy.testing.database_fixture_factory(
-        request, 'risclog.sqlalchemy.db3', 'db3')
+        request, 'risclog.sqlalchemy.db3', 'db3'
+    )
 
 
 @pytest.fixture(scope='function', autouse=True)
 def database_test_livecycle(request, database_1, database_2):
     """Make sure each test gets a clean database + session."""
     return risclog.sqlalchemy.testing.database_test_livecycle_fixture_factory(
-        request)
+        request
+    )
 
 
 @pytest.fixture(scope='class')
@@ -41,10 +45,9 @@ def test_model_factory(request):
     Object = None
 
     def factory(engine_name):
-        from sqlalchemy import Column
-        from sqlalchemy import Text
         import risclog.sqlalchemy.db
         import risclog.sqlalchemy.model
+        from sqlalchemy import Column, Text
 
         class TestObject(risclog.sqlalchemy.model.ObjectBase):
             _engine_name = engine_name
