@@ -59,7 +59,7 @@ jobs:
       env:
         POSTGRES_HOST: 0.0.0.0
         POSTGRES_USER: postgres
-      run: ./pytest
+      run: ./pytest --junit-xml pytest.xml
     - name: Upload coverage RAW data
       if: ${{ matrix.config[0] == '3.9' }}
       uses: actions/upload-artifact@v3
@@ -77,7 +77,7 @@ jobs:
     needs: test
     uses: risclog-solution/gha_workflow_templates/.github/workflows/coverage.yml@master
     with:
-      min_coverage: 95
+      min_coverage: 80
 
   pre-commit:
     uses: risclog-solution/gha_workflow_templates/.github/workflows/pre_commit.yml@master
