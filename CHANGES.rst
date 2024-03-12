@@ -7,6 +7,9 @@ Change log for risclog.sqlalchemy
 
 - Add json encoder for `uuid.UUID` objects.
 
+- Add `risclog.sqlalchemy.interfaces.Deleted` event which is fired when an
+  object is deleted from the database.
+
 
 6.0 (2023-09-26)
 ================

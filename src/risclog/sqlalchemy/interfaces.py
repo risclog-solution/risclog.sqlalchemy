@@ -30,3 +30,10 @@ class Added(zope.interface.interfaces.ObjectEvent):
 
     def __init__(self, object):
         self.object = object
+
+
+class Deleted(zope.interface.interfaces.ObjectEvent):
+    """An object has been removed from the session."""
+
+    def __init__(self, object):
+        self.object = object

@@ -5,7 +5,7 @@ import zope.component
 import zope.interface
 import zope.sqlalchemy
 from risclog.sqlalchemy.db import register_class
-from risclog.sqlalchemy.interfaces import Added, IDatabase
+from risclog.sqlalchemy.interfaces import Added, Deleted, IDatabase
 
 
 class ObjectBase:
@@ -49,6 +49,7 @@ class ObjectBase:
     def delete(self):
         """Remove the object from the database."""
         zope.component.getUtility(IDatabase).delete(self)
+        zope.event.notify(Deleted(self))
 
     @classmethod
     def query(cls, *args):
