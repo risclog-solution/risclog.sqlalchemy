@@ -5,7 +5,7 @@ Change log for risclog.sqlalchemy
 6.1 (unreleased)
 ================
 
-- Nothing changed yet.
+- Add json encoder for `uuid.UUID` objects.
 
 
 6.0 (2023-09-26)

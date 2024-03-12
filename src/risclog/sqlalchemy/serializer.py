@@ -2,6 +2,7 @@ import datetime
 import decimal
 import json
 import logging
+import uuid
 
 import sqlalchemy.orm
 
@@ -43,11 +44,16 @@ def decimal_encode(o, request=None):
     return str(o)
 
 
+def uuid_encode(o, request=None):
+    return str(o)
+
+
 ENCODERS = {
     ObjectBase: sqlalchemy_encode,
     datetime.date: datetime_encode,
     datetime.datetime: datetime_encode,
     decimal.Decimal: decimal_encode,
+    uuid.UUID: uuid_encode,
 }
 
 
