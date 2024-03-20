@@ -5,7 +5,16 @@ Change log for risclog.sqlalchemy
 6.2 (unreleased)
 ================
 
-- Nothing changed yet.
+- Introduce new `RoutingSession` method `execute_with_bind()` to execute
+  statements with a specific bind.
+- `RoutingSession.using_bind()` is now deprecated and kept for backward
+  compatibility.
+  Instead of a new session instance, it now returns a shim that maps a
+  minimal subset of session methods to the original session instance.
+  This change was necessary because the previous implementation of creating
+  a new session instance and copying all the original session's state 
+  proved unstable when used with SQLAlchemy 1.4. (One reason being the new
+  autobegin feature of sessions changing interactions with `zope.sqlalchemy`.)
 
 
 6.1 (2024-03-12)
