@@ -334,13 +334,13 @@ class Database:
         if not table_names:
             return
         tables = ', '.join('"%s"' % x for x in table_names)
-        self.session.execute(
+        self.session._bound_execute(
+            engine,
             'TRUNCATE {} {} {}'.format(
                 tables,
                 'RESTART IDENTITY' if restart_sequences else '',
                 'CASCADE' if cascade else '',
             ),
-            bind_arguments={'bind': engine},
         )
         zope.sqlalchemy.mark_changed(self.session)
         if commit:
