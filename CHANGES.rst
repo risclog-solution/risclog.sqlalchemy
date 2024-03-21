@@ -12,7 +12,7 @@ Change log for risclog.sqlalchemy
   Instead of a new session instance, it now returns a shim that maps a
   minimal subset of session methods to the original session instance.
   This change was necessary because the previous implementation of creating
-  a new session instance and copying all the original session's state 
+  a new session instance and copying all the original session's state
   proved unstable when used with SQLAlchemy 1.4. (One reason being the new
   autobegin feature of sessions changing interactions with `zope.sqlalchemy`.)
 
