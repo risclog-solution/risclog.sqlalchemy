@@ -12,9 +12,13 @@ import transaction
 import zope.component
 import zope.interface
 import zope.sqlalchemy
+from packaging.version import Version as parse_version
+from sqlalchemy import __version__ as sqlalchemy_version
 
 # Mapping engine name registered using Database.register_engine --> base class
 _ENGINE_CLASS_MAPPING = {}
+
+SA_GE_14 = parse_version(sqlalchemy_version) >= parse_version('1.4.0')
 
 
 def assert_engine_not_registered(name, mapping):
@@ -72,12 +76,60 @@ class RoutingSession(sqlalchemy.orm.Session):
 
         raise RuntimeError(f'Did not find an engine for {mapper.class_}')
 
+    def _bound_execute(self, bind, *args, **kwargs):
+        if SA_GE_14:
+            return self.execute(*args, bind_arguments={'bind': bind}, **kwargs)
+        else:
+            return self.execute(*args, bind=bind, **kwargs)
+
+    def execute_with_bind(self, engine_name, *args, **kwargs):
+        """
+        Execute a statement using a specific engine, indicated by its name.
+        """
+        db_util = zope.component.getUtility(
+            risclog.sqlalchemy.interfaces.IDatabase
+        )
+        bind = db_util.get_engine(engine_name)
+        return self._bound_execute(bind, *args, **kwargs)
+
     def using_bind(self, name):
-        """Select an engine name if not using mappers."""
-        session = RoutingSession()
-        vars(session).update(vars(self))
-        session._name = name
-        return session
+        """
+        Return session-like object that limits its action to the given engine.
+
+        This method is deprecated and is kept for backward compatibility.
+        If you need to execute a statement using a specific engine, use
+        `execute_with_bind` instead.
+        """
+
+        class BoundSession:
+            """
+            Shim that maps a subset of commonly used SQLAlchemy session methods
+            to the original session while forcing the bind.
+            """
+
+            def __init__(self, session, engine_name):
+                self.session = session
+                db_util = zope.component.getUtility(
+                    risclog.sqlalchemy.interfaces.IDatabase
+                )
+                self.bind = db_util.get_engine(engine_name)
+
+            def execute(self, *args, **kwargs):
+                return self.session._bound_execute(self.bind, *args, **kwargs)
+
+            def query(self, *args, **kwargs):
+                # Associate query with this shim-session, to make it use its
+                # `execute` method.
+                query = self.session.query(*args, **kwargs).with_session(self)
+                # Used to introspect if a query is bound to a specific engine.
+                query._bind = self.bind
+                return query
+
+            def connection(self):
+                bind = self.session.get_bind(bind=self.bind)
+                return self.session._connection_for_bind(bind)
+
+        return BoundSession(self, name)
 
 
 def get_database(testing=False, keep_session=False, expire_on_commit=False):
@@ -186,8 +238,10 @@ class Database:
     def _verify_engine(self, engine):
         # Step 1: Try to identify a testing table
         conn = engine.connect()
+        from sqlalchemy import text
+
         try:
-            conn.execute('SELECT * FROM tmp_functest')
+            conn.execute(text('SELECT * FROM tmp_functest'))
         except sqlalchemy.exc.DatabaseError:
             db_is_testing = False
         else:
@@ -286,7 +340,7 @@ class Database:
                 'RESTART IDENTITY' if restart_sequences else '',
                 'CASCADE' if cascade else '',
             ),
-            bind=engine,
+            bind_arguments={'bind': engine},
         )
         zope.sqlalchemy.mark_changed(self.session)
         if commit:
