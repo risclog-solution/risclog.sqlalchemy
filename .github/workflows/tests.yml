@@ -1,77 +1,21 @@
-name: tests
+name: Test
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - master
+      - testing
   pull_request:
-    branches: [ main ]
-    type: [ "opened", "reopened", "synchronize" ]
   schedule:
-    - cron: '0 12 * * 0'  # run once a week on Sunday
-  # Allow to run this workflow manually from the Actions tab
-  workflow_dispatch:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0 1 * * *'
 
 jobs:
   test:
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_PASSWORD: P0sTGrE5*Pa55W0rt!
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-    strategy:
-      matrix:
-        config:
-        # [Python version, tox env]
-        - ["3.7",   "py37"]
-        - ["3.8",   "py38"]
-        - ["3.9",   "py39"]
-        - ["3.10",  "py310"]
-        - ["3.11",  "py311"]
-
-    runs-on: ubuntu-20.04
-    name: ${{ matrix.config[1] }}
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.config[0] }}
-    - name: Setup PostgreSQL environment
-      run: |
-        echo "0.0.0.0:5432:*:postgres:P0sTGrE5*Pa55W0rt!" >> ~/.pgpass
-        chmod 600 ~/.pgpass
-    - name: Pip cache
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('setup.*', 'requirements.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-    - name: Test
-      env:
-        POSTGRES_HOST: 0.0.0.0
-        POSTGRES_USER: postgres
-      run: ./pytest --junit-xml pytest.xml
-    - name: Upload coverage RAW data
-      if: ${{ matrix.config[0] == '3.9' }}
-      uses: actions/upload-artifact@v3
-      with:
-        name: coverage-data
-        path: ".coverage*"
-    - name: Upload Test Results
-      if: ${{ matrix.config[0] == '3.9' }}
-      uses: actions/upload-artifact@v3
-      with:
-        name: test-results
-        path: pytest.xml
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/pytest_appenv.yml@master
+    with:
+      versions: >-
+        ["3.8",]
 
   coverage:
     needs: test
@@ -91,3 +35,20 @@ jobs:
   publish-test-results:
     needs: test
     uses: risclog-solution/gha_workflow_templates/.github/workflows/publish_test_results.yml@master
+
+  check-release:
+    needs: [test, coverage, pre-commit]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/check_release.yml@master
+
+  release:
+    needs: check-release
+    if: needs.check-release.outputs.result == '1'
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/release.yml@master
+    with:
+      package_name: risclog.sqlalchemy
+    secrets:
+      PYPIRC: ${{ secrets.PYPIRC }}
+
+  cleanup:
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/cleanup.yml@master
