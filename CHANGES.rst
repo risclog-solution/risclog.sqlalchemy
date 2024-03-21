@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-6.2 (unreleased)
+7.0 (2024-03-21)
 ================
 
 - Introduce new `RoutingSession` method `execute_with_bind()` to execute
