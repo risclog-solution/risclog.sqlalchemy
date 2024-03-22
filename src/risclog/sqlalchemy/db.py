@@ -182,7 +182,7 @@ class Database:
         engine_args['echo'] = bool(
             int(os.environ.get('ECHO_SQLALCHEMY_QUERIES', '0'))
         )
-        engine = sqlalchemy.create_engine(dsn, future=False, **engine_args)
+        engine = sqlalchemy.create_engine(dsn, **engine_args)
         self._verify_engine(engine)
         self._engines[name] = dict(
             engine=engine, alembic_location=alembic_location
