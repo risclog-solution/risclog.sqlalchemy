@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-7.1 (unreleased)
+7.1 (2024-03-22)
 ================
 
 - Fix `sqlalchemy` 1.3 compatibility in `Database.empty()`.
