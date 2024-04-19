@@ -2,6 +2,12 @@
 Change log for risclog.sqlalchemy
 =================================
 
+6.2 (unreleased)
+================
+
+- Add json encoder for `datetime.time` objects.
+
+
 6.1 (2024-03-12)
 ================
 

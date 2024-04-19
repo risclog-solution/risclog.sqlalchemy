@@ -51,6 +51,7 @@ def uuid_encode(o, request=None):
 ENCODERS = {
     ObjectBase: sqlalchemy_encode,
     datetime.date: datetime_encode,
+    datetime.time: datetime_encode,
     datetime.datetime: datetime_encode,
     decimal.Decimal: decimal_encode,
     uuid.UUID: uuid_encode,
