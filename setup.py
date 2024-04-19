@@ -9,7 +9,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='risclog.sqlalchemy',
-    version='6.2',
+    version='6.3.dev0',
     python_requires='>=3.7',
     install_requires=[
         'SQLAlchemy >= 1.0, < 2',
