@@ -403,5 +403,5 @@ class AlembicContext:
             self.config, self.script, fn=upgrade_fn, destination_rev=dest_rev
         ) as ec:
             ec.configure(self.conn)
-            with self.conn.begin():
-                ec.run_migrations()
+            ec.run_migrations()
+            self.conn.commit()
