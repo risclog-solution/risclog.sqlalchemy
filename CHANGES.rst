@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-7.3 (unreleased)
+8.0 (2025-02-12)
 ================
 
 - Add compatability to sqlalchemy 2. Break with compatability to sqlalchemy < 1.4.
