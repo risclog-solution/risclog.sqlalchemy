@@ -105,6 +105,6 @@ class_registry = {}
 
 def declarative_base(cls, **kw):
     """Create a `declarative_base` from a base Object."""
-    obj = sqlalchemy.ext.declarative.declarative_base(cls=cls, **kw)
+    obj = sqlalchemy.orm.declarative_base(cls=cls, **kw)
     register_class(obj)
     return obj

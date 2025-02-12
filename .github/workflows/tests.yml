@@ -15,7 +15,7 @@ jobs:
     uses: risclog-solution/gha_workflow_templates/.github/workflows/pytest_appenv.yml@master
     with:
       versions: >-
-        ["3.8",]
+        ["3.11",]
 
   coverage:
     needs: test

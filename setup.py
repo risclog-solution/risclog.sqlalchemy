@@ -9,10 +9,10 @@ from setuptools import find_packages, setup
 
 setup(
     name='risclog.sqlalchemy',
-    version='7.3.dev0',
+    version='8.0.dev0',
     python_requires='>=3.7',
     install_requires=[
-        'SQLAlchemy >= 1.0, < 2',
+        'SQLAlchemy >= 1.4',
         'alembic >= 0.7',
         'pytz',
         'setuptools',
@@ -29,6 +29,9 @@ setup(
             'mock',
             'pyramid',
             'pytest',
+            'psycopg2-binary',
+            'greenlet',
+            'pytest-cov',
         ],
         'pyramid': ['pyramid'],
     },

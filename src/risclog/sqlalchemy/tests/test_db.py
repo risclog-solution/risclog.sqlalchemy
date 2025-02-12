@@ -5,7 +5,7 @@ import pytest
 import risclog.sqlalchemy.model
 import sqlalchemy
 import transaction
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, text
 
 from ..db import _ENGINE_CLASS_MAPPING, Database, get_database, register_class
 from ..model import ObjectBase, declarative_base
@@ -155,10 +155,12 @@ def test_database_is_detected_automatically_among_several(
 
     # When using session.execute, a manual bind is necessary though
     with pytest.raises(RuntimeError):
-        assert db.session.execute('SELECT count(*) FROM model_1').fetchall()
+        assert db.session.execute(
+            text('SELECT count(*) FROM model_1')
+        ).fetchall()
     # Using a bound session leads to a result:
     assert db.session.using_bind('db1').execute(
-        'SELECT count(*) FROM model_1'
+        text('SELECT count(*) FROM model_1')
     ).fetchall() == [(1,)]
 
 
