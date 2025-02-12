@@ -404,4 +404,5 @@ class AlembicContext:
         ) as ec:
             ec.configure(self.conn)
             ec.run_migrations()
-            self.conn.commit()
+            if hasattr(self.conn, 'commit'):
+                self.conn.commit()
