@@ -25,7 +25,9 @@ class LinkedModel(Object):
         ForeignKey('sequencemodel.id'),
         primary_key=True,
     )
-    sequence_model = sqlalchemy.orm.relation('SequenceModel', uselist=False)
+    sequence_model = sqlalchemy.orm.relationship(
+        'SequenceModel', uselist=False
+    )
 
 
 class SequenceModel(Object):

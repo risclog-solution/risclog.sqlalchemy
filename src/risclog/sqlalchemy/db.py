@@ -14,6 +14,7 @@ import zope.interface
 import zope.sqlalchemy
 from packaging.version import Version as parse_version
 from sqlalchemy import __version__ as sqlalchemy_version
+from sqlalchemy import text
 
 # Mapping engine name registered using Database.register_engine --> base class
 _ENGINE_CLASS_MAPPING = {}
@@ -77,10 +78,7 @@ class RoutingSession(sqlalchemy.orm.Session):
         raise RuntimeError(f'Did not find an engine for {mapper.class_}')
 
     def _bound_execute(self, bind, *args, **kwargs):
-        if SA_GE_14:
-            return self.execute(*args, bind_arguments={'bind': bind}, **kwargs)
-        else:
-            return self.execute(*args, bind=bind, **kwargs)
+        return self.execute(*args, bind_arguments={'bind': bind}, **kwargs)
 
     def execute_with_bind(self, engine_name, *args, **kwargs):
         """
@@ -220,9 +218,11 @@ class Database:
         location = engine['alembic_location']
         if location:
             with alembic_context(engine['engine'], location) as ac:
-                ac.migration_context.stamp(
-                    ac.script, ac.script.get_current_head()
-                )
+                with ac.migration_context.begin_transaction():
+                    ac.migration_context.stamp(
+                        ac.script, ac.script.get_current_head()
+                    )
+
         if create_defaults:
             self.create_defaults(engine_name)
 
@@ -336,10 +336,12 @@ class Database:
         tables = ', '.join('"%s"' % x for x in table_names)
         self.session._bound_execute(
             engine,
-            'TRUNCATE {} {} {}'.format(
-                tables,
-                'RESTART IDENTITY' if restart_sequences else '',
-                'CASCADE' if cascade else '',
+            text(
+                'TRUNCATE {} {} {}'.format(
+                    tables,
+                    'RESTART IDENTITY' if restart_sequences else '',
+                    'CASCADE' if cascade else '',
+                )
             ),
         )
         zope.sqlalchemy.mark_changed(self.session)
@@ -401,4 +403,5 @@ class AlembicContext:
             self.config, self.script, fn=upgrade_fn, destination_rev=dest_rev
         ) as ec:
             ec.configure(self.conn)
-            ec.run_migrations()
+            with self.conn.begin():
+                ec.run_migrations()
