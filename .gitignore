@@ -21,4 +21,4 @@ lib
 local.cfg
 parts
 testreport.xml
-.appenv
+.venv

@@ -1,6 +1,6 @@
 from unittest import mock
 
-import pkg_resources
+import importlib_resources
 import pytest
 import risclog.sqlalchemy.model
 import sqlalchemy
@@ -111,7 +111,7 @@ def test_get_database_makes_sure_testing_matches(database_1):
 def test_assert_db_rev_raises_if_mismatch(database_1):
     database_1._engines['db1'][
         'alembic_location'
-    ] = pkg_resources.resource_filename(__name__, 'fixtures/alembic')
+    ] = str(importlib_resources.files(__name__) / 'fixtures/alembic')
     with pytest.raises(ValueError):
         database_1.assert_database_revision_is_current('db1')
 
@@ -176,7 +176,7 @@ def test_create_all_marks_alembic_current(database_1, request):
 
     database_1._engines['db1'][
         'alembic_location'
-    ] = pkg_resources.resource_filename(__name__, 'fixtures/alembic')
+    ] = str(importlib_resources.files(__name__) / 'fixtures/alembic')
     database_1.create_all('db1')
     database_1.assert_database_revision_is_current('db1')
 
@@ -193,7 +193,7 @@ def test_update_database_revision_to_current(database_1, request):
 
     database_1._engines['db1'][
         'alembic_location'
-    ] = pkg_resources.resource_filename(__name__, 'fixtures/alembic')
+    ] = str(importlib_resources.files(__name__) / 'fixtures/alembic')
     with pytest.raises(ValueError):
         database_1.assert_database_revision_is_current('db1')
     database_1.update_database_revision_to_current('db1')

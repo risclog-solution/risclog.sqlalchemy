@@ -12,10 +12,11 @@ on:
 
 jobs:
   test:
-    uses: risclog-solution/gha_workflow_templates/.github/workflows/pytest_appenv.yml@master
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/pytest_uv_selfhosted.yml@master
     with:
-      versions: >-
-        ["3.11",]
+      timeout_minutes: 30
+    secrets:
+      UVCONF: ${{ secrets.UVCONF }}
 
   coverage:
     needs: test

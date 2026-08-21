@@ -1,5 +1,6 @@
 include *.rst
 include *.txt
+include uv.lock
 
 include .coveragerc
 exclude .coveragerc
@@ -23,7 +24,4 @@ recursive-include doc *.txt
 recursive-include src *.mako
 recursive-include src *.py
 
-exclude *.lock
 exclude .isort.cfg
-exclude appenv
-exclude pytest

@@ -24,7 +24,7 @@ Developing risclog.sqlalchemy
 Running tests
 =============
 
-Simply run `./pytest` in the root of the repository.
+Simply run `uv run pytest` in the root of the repository.
 
 
 Documentation
