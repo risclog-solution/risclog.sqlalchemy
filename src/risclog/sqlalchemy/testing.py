@@ -1,6 +1,5 @@
 import unittest
 
-import gocept.testdb
 import risclog.sqlalchemy.db
 import sqlalchemy
 import sqlalchemy.orm.session
@@ -10,7 +9,9 @@ import zope.component
 
 def get_db_util():
     """Get the database utility registered with `name`."""
-    return zope.component.queryUtility(risclog.sqlalchemy.interfaces.IDatabase)
+    return zope.component.queryUtility(
+        risclog.sqlalchemy.interfaces.IDatabase
+    )
 
 
 def setUpDB(factory, name='', alembic_location=None):
@@ -69,6 +70,7 @@ def database_fixture_factory(
     """
 
     def db_factory():
+        import gocept.testdb
         return gocept.testdb.PostgreSQL(prefix=prefix, schema_path=schema_path)
 
     def dropdb():
