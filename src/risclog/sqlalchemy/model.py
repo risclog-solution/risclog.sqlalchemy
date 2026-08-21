@@ -9,8 +9,7 @@ from risclog.sqlalchemy.interfaces import Added, Deleted, IDatabase
 
 
 class ObjectBase:
-
-    _engine_name = ''  # set another name to use multiple databases
+    _engine_name = ""  # set another name to use multiple databases
 
     @sqlalchemy.ext.declarative.declared_attr
     def __tablename__(cls):

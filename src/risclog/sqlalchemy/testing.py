@@ -9,15 +9,13 @@ import zope.component
 
 def get_db_util():
     """Get the database utility registered with `name`."""
-    return zope.component.queryUtility(
-        risclog.sqlalchemy.interfaces.IDatabase
-    )
+    return zope.component.queryUtility(risclog.sqlalchemy.interfaces.IDatabase)
 
 
-def setUpDB(factory, name='', alembic_location=None):
+def setUpDB(factory, name="", alembic_location=None):
     db = factory()
     if db.exists:
-        raise ValueError(f'Database {db.db_name}@{db.db_host} already exists!')
+        raise ValueError(f"Database {db.db_name}@{db.db_host} already exists!")
     db.create()
     db_util = risclog.sqlalchemy.db.get_database(testing=True)
     db_util.register_engine(
@@ -26,7 +24,7 @@ def setUpDB(factory, name='', alembic_location=None):
     return db
 
 
-def tearDownDB(db, name=''):
+def tearDownDB(db, name=""):
     # close all connections, but...
     transaction.abort()
     # ...sometimes transaction.abort() is not enough, and...
@@ -36,7 +34,7 @@ def tearDownDB(db, name=''):
     # ...connections that have been checked-out from the pool and not yet
     # returned are not closed by dispose, either, so we have to hunt them
     # down ourselves (This is only necessary/possible for SQLAlchemy < 1.4.):
-    for conn in getattr(sqlalchemy.pool, '_refs', ()):
+    for conn in getattr(sqlalchemy.pool, "_refs", ()):
         conn.close()
     db.drop()
     if db_util and not db_util.get_all_engines():
@@ -47,7 +45,7 @@ def tearDownDB(db, name=''):
 def database_fixture_factory(
     request,
     prefix,
-    name='',
+    name="",
     schema_path=None,
     create_all=False,
     alembic_location=None,
@@ -71,6 +69,7 @@ def database_fixture_factory(
 
     def db_factory():
         import gocept.testdb
+
         return gocept.testdb.PostgreSQL(prefix=prefix, schema_path=schema_path)
 
     def dropdb():

@@ -19,14 +19,14 @@ from sqlalchemy import text
 # Mapping engine name registered using Database.register_engine --> base class
 _ENGINE_CLASS_MAPPING = {}
 
-SA_GE_14 = parse_version(sqlalchemy_version) >= parse_version('1.4.0')
+SA_GE_14 = parse_version(sqlalchemy_version) >= parse_version("1.4.0")
 
 
 def assert_engine_not_registered(name, mapping):
     """Ensure a consistent error message."""
     assert (
         name not in mapping
-    ), f'An engine for name `{name}` is already registered.'
+    ), f"An engine for name `{name}` is already registered."
 
 
 def register_class(class_):
@@ -75,10 +75,10 @@ class RoutingSession(sqlalchemy.orm.Session):
             if issubclass(mapper.class_, class_):
                 return db_util.get_engine(engine_name)
 
-        raise RuntimeError(f'Did not find an engine for {mapper.class_}')
+        raise RuntimeError(f"Did not find an engine for {mapper.class_}")
 
     def _bound_execute(self, bind, *args, **kwargs):
-        return self.execute(*args, bind_arguments={'bind': bind}, **kwargs)
+        return self.execute(*args, bind_arguments={"bind": bind}, **kwargs)
 
     def execute_with_bind(self, engine_name, *args, **kwargs):
         """
@@ -139,10 +139,9 @@ def get_database(testing=False, keep_session=False, expire_on_commit=False):
     db = zope.component.queryUtility(risclog.sqlalchemy.interfaces.IDatabase)
     if db is None:
         db = Database(testing, keep_session, expire_on_commit)
-    assert (
-        db.testing == testing
-    ), 'Requested testing status `%s` does not match Database.testing.' % (
-        testing
+    assert db.testing == testing, (
+        "Requested testing status `%s` does not match Database.testing."
+        % (testing)
     )
     return db
 
@@ -158,8 +157,8 @@ class Database:
             )
             is None
         ), (
-            'Cannot create Database twice, use `.get_database()` to get '
-            'the instance.'
+            "Cannot create Database twice, use `.get_database()` to get "
+            "the instance."
         )
         self._engines = {}
         self.testing = testing
@@ -174,11 +173,11 @@ class Database:
         self._setup_utility()
 
     def register_engine(
-        self, dsn, engine_args={}, name='', alembic_location=None
+        self, dsn, engine_args={}, name="", alembic_location=None
     ):
         assert_engine_not_registered(name, self._engines)
-        engine_args['echo'] = bool(
-            int(os.environ.get('ECHO_SQLALCHEMY_QUERIES', '0'))
+        engine_args["echo"] = bool(
+            int(os.environ.get("ECHO_SQLALCHEMY_QUERIES", "0"))
         )
         engine = sqlalchemy.create_engine(dsn, **engine_args)
         self._verify_engine(engine)
@@ -190,13 +189,13 @@ class Database:
         # reflection now.
         self.prepare_deferred(_ENGINE_CLASS_MAPPING.get(name))
 
-    def get_engine(self, name=''):
-        return self._engines[name]['engine']
+    def get_engine(self, name=""):
+        return self._engines[name]["engine"]
 
     def get_all_engines(self):
-        return [x['engine'] for x in self._engines.values()]
+        return [x["engine"] for x in self._engines.values()]
 
-    def drop_engine(self, name=''):
+    def drop_engine(self, name=""):
         engine = self.get_engine(name)
         engine.dispose()
         del self._engines[name]
@@ -207,17 +206,17 @@ class Database:
         if issubclass(class_, sqlalchemy.ext.declarative.DeferredReflection):
             class_.prepare(self.get_engine(class_._engine_name))
 
-    def create_all(self, engine_name='', create_defaults=True):
+    def create_all(self, engine_name="", create_defaults=True):
         """Create all tables etc. for an engine."""
         engine = self._engines[engine_name]
         _ENGINE_CLASS_MAPPING[engine_name].metadata.create_all(
-            engine['engine']
+            engine["engine"]
         )
 
         # mark the database to be in the latest revision
-        location = engine['alembic_location']
+        location = engine["alembic_location"]
         if location:
-            with alembic_context(engine['engine'], location) as ac:
+            with alembic_context(engine["engine"], location) as ac:
                 with ac.migration_context.begin_transaction():
                     ac.migration_context.stamp(
                         ac.script, ac.script.get_current_head()
@@ -226,13 +225,13 @@ class Database:
         if create_defaults:
             self.create_defaults(engine_name)
 
-    def create_defaults(self, engine_name=''):
+    def create_defaults(self, engine_name=""):
         for name, class_ in risclog.sqlalchemy.model.class_registry.items():
             # do not call create_defaults for foreign engines,
             # since they may not be set up yet
-            if engine_name != getattr(class_, '_engine_name', NotImplemented):
+            if engine_name != getattr(class_, "_engine_name", NotImplemented):
                 continue
-            if hasattr(class_, 'create_defaults'):
+            if hasattr(class_, "create_defaults"):
                 class_.create_defaults()
 
     def _verify_engine(self, engine):
@@ -241,7 +240,7 @@ class Database:
         from sqlalchemy import text
 
         try:
-            conn.execute(text('SELECT * FROM tmp_functest'))
+            conn.execute(text("SELECT * FROM tmp_functest"))
         except sqlalchemy.exc.DatabaseError:
             db_is_testing = False
         else:
@@ -258,25 +257,25 @@ class Database:
 
         # We're not in a valid state. Bail out.
         raise SystemExit(
-            'Not working against correct database (live vs '
-            'testing). Refusing to set up database connection '
-            'to {}.'.format(engine.url)
+            "Not working against correct database (live vs "
+            "testing). Refusing to set up database connection "
+            "to {}.".format(engine.url)
         )
 
-    def assert_database_revision_is_current(self, engine_name=''):
+    def assert_database_revision_is_current(self, engine_name=""):
         def assert_revision(ac, head_rev, db_rev):
             if head_rev != db_rev:
                 raise ValueError(
                     'Database revision {} of engine "{}" does not match '
-                    'current revision {}.\nMaybe you want to call '
-                    '`bin/alembic upgrade head`.'.format(
+                    "current revision {}.\nMaybe you want to call "
+                    "`bin/alembic upgrade head`.".format(
                         db_rev, engine_name, head_rev
                     )
                 )
 
         self._run_in_alembic_context(assert_revision, engine_name)
 
-    def update_database_revision_to_current(self, engine_name=''):
+    def update_database_revision_to_current(self, engine_name=""):
         def upgrade_revision(ac, head_rev, db_rev):
             if head_rev != db_rev:
                 ac.upgrade(head_rev)
@@ -318,7 +317,7 @@ class Database:
 
             try:
                 # never truncate the PostGIS table
-                table_names.remove('spatial_ref_sys')
+                table_names.remove("spatial_ref_sys")
             except ValueError:
                 pass
 
@@ -328,19 +327,19 @@ class Database:
                 # does not change the schema. Clearing the alembic_version will
                 # cause "confusion and delay".
                 try:
-                    table_names.remove('alembic_version')
+                    table_names.remove("alembic_version")
                 except ValueError:
                     pass
         if not table_names:
             return
-        tables = ', '.join('"%s"' % x for x in table_names)
+        tables = ", ".join('"%s"' % x for x in table_names)
         self.session._bound_execute(
             engine,
             text(
-                'TRUNCATE {} {} {}'.format(
+                "TRUNCATE {} {} {}".format(
                     tables,
-                    'RESTART IDENTITY' if restart_sequences else '',
-                    'CASCADE' if cascade else '',
+                    "RESTART IDENTITY" if restart_sequences else "",
+                    "CASCADE" if cascade else "",
                 )
             ),
         )
@@ -348,7 +347,7 @@ class Database:
         if commit:
             transaction.commit()
 
-    def _run_in_alembic_context(self, func, engine_name=''):
+    def _run_in_alembic_context(self, func, engine_name=""):
         """Run a function in `alembic_context`.
 
         The function must take three parameters:
@@ -358,10 +357,10 @@ class Database:
 
         """
         engine = self._engines[engine_name]
-        location = engine['alembic_location']
+        location = engine["alembic_location"]
         if not location:
             return
-        with alembic_context(engine['engine'], location) as ac:
+        with alembic_context(engine["engine"], location) as ac:
             head_rev = ac.script.get_current_head()
             db_rev = ac.migration_context.get_current_revision()
             return func(ac, head_rev, db_rev)
@@ -387,7 +386,7 @@ class AlembicContext:
     def __init__(self, conn, script_location):
         self.conn = conn
         self.config = alembic.config.Config()
-        self.config.set_main_option('script_location', script_location)
+        self.config.set_main_option("script_location", script_location)
         self.migration_context = alembic.migration.MigrationContext.configure(
             conn
         )
@@ -404,5 +403,5 @@ class AlembicContext:
         ) as ec:
             ec.configure(self.conn)
             ec.run_migrations()
-            if hasattr(self.conn, 'commit'):
+            if hasattr(self.conn, "commit"):
                 self.conn.commit()

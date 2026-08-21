@@ -100,26 +100,26 @@ class ModelCache:
             self.hp.setrelheap()
 
     def __sizeof__(self):
-        if not hasattr(self, 'hp'):
+        if not hasattr(self, "hp"):
             return 0
 
         h = self.hp.heap()
         return h.size
 
-    def _sizeof_fmt(self, num, suffix='B'):
-        for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
+    def _sizeof_fmt(self, num, suffix="B"):
+        for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
             if abs(num) < 1024.0:
-                return f'{num:3.1f} {unit}{suffix}'
+                return f"{num:3.1f} {unit}{suffix}"
             num /= 1024.0
-        return f'{num:.1f}Yi{suffix}'
+        return f"{num:.1f}Yi{suffix}"
 
     def log_memory_usage(self):
-        if not hasattr(self, 'hp'):
+        if not hasattr(self, "hp"):
             return
 
         bsize = sys.getsizeof(self)
         size = self._sizeof_fmt(bsize)
-        self._log('info', f'Memory usage: {size} ({bsize})')
+        self._log("info", f"Memory usage: {size} ({bsize})")
 
     def find(self, model, **kwargs):
         """
@@ -205,7 +205,7 @@ class ModelCache:
                 .connection.cursor()
             )
 
-        self._log('debug', 'Flushing model cache.')
+        self._log("debug", "Flushing model cache.")
         self._assign_sequences()
         self._sync_relationship_attrs()
 
@@ -239,7 +239,7 @@ class ModelCache:
             cursor.connection.commit()
 
         self.clear(session)
-        self._log('info', 'Flushed model cache.')
+        self._log("info", "Flushed model cache.")
 
     def _save_by_copy(self, cursor, objects):
         """
@@ -273,7 +273,7 @@ class ModelCache:
                         if column.default is not None:
                             value = column.default.arg
                         else:
-                            value = r'\N'
+                            value = r"\N"
                     elif type(value) != column.type.python_type:
                         value = column.type.python_type(value)
                     row[column.key] = value
@@ -281,11 +281,11 @@ class ModelCache:
 
             file.seek(0)
 
-            columns_string = ','.join(
+            columns_string = ",".join(
                 [f'"{column}"' for column in table.columns.keys()]
             )
             cursor.copy_expert(
-                f'COPY {table} ({columns_string}) '
+                f"COPY {table} ({columns_string}) "
                 "FROM STDIN WITH CSV DELIMITER ',' NULL '\\N'",
                 file,
             )
@@ -451,12 +451,12 @@ class ModelCache:
     def _register_change_handler(self, model, event_handler):
         """Register an event handler for every column of a model."""
         for attr in inspect(model).column_attrs:
-            sqlalchemy.event.listen(attr, 'set', event_handler)
+            sqlalchemy.event.listen(attr, "set", event_handler)
 
     def _deregister_change_handler(self, model, event_handler):
         """Removes an event handler for every column of a model."""
         for attr in inspect(model).column_attrs:
-            sqlalchemy.event.listen(attr, 'set', event_handler)
+            sqlalchemy.event.listen(attr, "set", event_handler)
 
     def _instance_change_handler(self, instance, value, oldvalue, initiator):
         """
@@ -466,7 +466,7 @@ class ModelCache:
         attribute was changed. For more information,
         see: https://docs.sqlalchemy.org/en/13/orm/events.html
         """  # noqa: E501
-        if oldvalue is sqlalchemy.util.symbol('NEVER_SET'):
+        if oldvalue is sqlalchemy.util.symbol("NEVER_SET"):
             return
 
         model = type(instance)

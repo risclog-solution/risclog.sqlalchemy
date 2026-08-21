@@ -5,7 +5,7 @@ import pytest
 
 
 class ObjectBaseTests(unittest.TestCase):
-    @mock.patch('risclog.sqlalchemy.serializer.sqlalchemy_encode')
+    @mock.patch("risclog.sqlalchemy.serializer.sqlalchemy_encode")
     def test__json__calls_custom_serializer(self, sql_enc):
         import risclog.sqlalchemy.model
 

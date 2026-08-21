@@ -97,26 +97,9 @@ exclude_lines = [
     "-> ['\"]?NoReturn['\"]?:",
 ]
 
-[tool.black]
+[tool.ruff]
+target-version = "py312"
 line-length = 79
-target-version = ['py312']
-exclude = '''
-/(
-    \.eggs
-  | eggs
-  | venv
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
-skip-string-normalization = true
 
 [tool.check-manifest]
 ignore-bad-ideas = ["*.mo"]

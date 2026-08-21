@@ -20,8 +20,8 @@ def sqlalchemy_encode(o):
 
 def patch():
     log.info(
-        'Applying monkey patch: json '
-        'default encoder for sqlalchemy models, datetime and decimal.'
+        "Applying monkey patch: json "
+        "default encoder for sqlalchemy models, datetime and decimal."
     )
     json._default_encoder._default_orig = json._default_encoder.default
     json._default_encoder.default = encode
@@ -29,8 +29,8 @@ def patch():
 
 def unpatch():
     log.info(
-        'Un-applying monkey patch: json '
-        'default encoder for sqlalchemy models, datetime and decimal.'
+        "Un-applying monkey patch: json "
+        "default encoder for sqlalchemy models, datetime and decimal."
     )
     json._default_encoder.default = json._default_encoder._default_orig
     del json._default_encoder._default_orig

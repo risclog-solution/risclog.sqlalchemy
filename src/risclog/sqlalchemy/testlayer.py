@@ -4,14 +4,13 @@ import risclog.sqlalchemy.testing
 
 
 class DatabaseLayer(plone.testing.Layer):
-
     defaultBases = [plone.testing.zca.LAYER_CLEANUP]
 
     def __init__(self, name, factory, managed_tables=None):
         super().__init__()
         # name should be the engine name of the mapped classes
         self.engine_name = name
-        self.name = 'database_' + name
+        self.name = "database_" + name
         self._db_factory = factory
         self._db_managed_tables = managed_tables
 

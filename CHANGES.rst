@@ -5,7 +5,7 @@ Change log for risclog.sqlalchemy
 8.1 (unreleased)
 ================
 
-- Nothing changed yet.
+- deps: Switch to uv, pyproject.toml and PEP-420 namespace package.
 
 
 8.0 (2025-12-02)
