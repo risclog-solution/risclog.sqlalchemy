@@ -13,8 +13,8 @@ coverage-report
 coverage.xml
 develop-eggs
 dist
-doc
-doc/_api
+docs
+docs/_api
 eggs
 include
 lib

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "risclog.sqlalchemy"
-version = "8.0.dev0"
+version = "8.1.dev0"
 description = "Encapsulate sqlalchemy modelling infrastructure."
 keywords = ["sqlalchemy", "alembic", "model", "infrastructure", "utility"]
 requires-python = ">=3.7"
@@ -22,11 +22,8 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: Implementation",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Database",
@@ -102,7 +99,7 @@ exclude_lines = [
 
 [tool.black]
 line-length = 79
-target-version = ['py38']
+target-version = ['py312']
 exclude = '''
 /(
     \.eggs
