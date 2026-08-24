@@ -2,6 +2,12 @@
 Change log for risclog.sqlalchemy
 =================================
 
+9.1 (unreleased)
+================
+
+- Nothing changed yet.
+
+
 9.0 (2026-08-24)
 ================
 
