@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "risclog.sqlalchemy"
-version = "8.1.dev0"
+version = "9.0"
 description = "Encapsulate sqlalchemy modelling infrastructure."
 keywords = ["sqlalchemy", "alembic", "model", "infrastructure", "utility"]
 requires-python = ">=3.7"
