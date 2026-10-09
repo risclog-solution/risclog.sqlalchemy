@@ -69,3 +69,4 @@ repos:
       args: [--no-build-isolation]
       additional_dependencies:
         - wheel
+        - setuptools>=84.0.0
