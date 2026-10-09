@@ -249,7 +249,7 @@ class ModelCache:
         See: https://www.postgresql.org/docs/current/sql-copy.html
 
         Args:
-            cursor: A Psycopg2 cursor
+            cursor: A psycopg2 or psycopg 3 cursor
             objects: SQLAlchemy ORM instances to save
         """
         if len(objects) == 0:
@@ -284,11 +284,16 @@ class ModelCache:
             columns_string = ",".join(
                 [f'"{column}"' for column in table.columns.keys()]
             )
-            cursor.copy_expert(
+            statement = (
                 f"COPY {table} ({columns_string}) "
-                "FROM STDIN WITH CSV DELIMITER ',' NULL '\\N'",
-                file,
+                "FROM STDIN WITH CSV DELIMITER ',' NULL '\\N'"
             )
+            if hasattr(cursor, "copy_expert"):  # psycopg2
+                cursor.copy_expert(statement, file)
+            else:  # psycopg 3
+                with cursor.copy(statement) as copy:
+                    while data := file.read(8192):
+                        copy.write(data)
             cursor.connection.commit()
 
     def clear(self, session=None):
