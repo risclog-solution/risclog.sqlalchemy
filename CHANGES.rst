@@ -2,7 +2,7 @@
 Change log for risclog.sqlalchemy
 =================================
 
-9.1 (unreleased)
+9.1 (2026-10-09)
 ================
 
 - deps: Drop support for Python 3.10 and 3.11.
