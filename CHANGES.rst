@@ -2,8 +2,8 @@
 Change log for risclog.sqlalchemy
 =================================
 
-9.2 (unreleased)
-================
+9.1.1 (2026-10-13)
+==================
 
 - deps: Loosen requirements for sqlalchemy.
 
