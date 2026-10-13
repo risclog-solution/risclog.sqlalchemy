@@ -605,7 +605,7 @@ requires-dist = [
     { name = "importlib-resources" },
     { name = "pyramid", marker = "extra == 'pyramid'" },
     { name = "pytz" },
-    { name = "setuptools", specifier = ">=84.0.0" },
+    { name = "setuptools" },
     { name = "sqlalchemy", specifier = ">=1.4" },
     { name = "transaction" },
     { name = "zope-component", specifier = ">=4.0.1" },

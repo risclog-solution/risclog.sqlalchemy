@@ -5,8 +5,8 @@ Change log for risclog.sqlalchemy
 9.2 (unreleased)
 ================
 
-- deps: update dependencies
-  (https://redmine.risclog.de/issues/45609)
+- deps: Loosen requirements for sqlalchemy.
+
 
 9.1 (2026-10-09)
 ================

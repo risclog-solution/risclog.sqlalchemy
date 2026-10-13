@@ -34,7 +34,7 @@ dependencies = [
     "alembic >= 0.7",
     "importlib_resources",
     "pytz",
-    "setuptools>=84.0.0",
+    "setuptools",
     "transaction",
     "zope.component >= 4.0.1",
     "zope.interface",
