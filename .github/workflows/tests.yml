@@ -12,7 +12,7 @@ on:
 
 jobs:
   test:
-    uses: risclog-solution/gha_workflow_templates/.github/workflows/pytest_uv_selfhosted.yml@master
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/pytest_uv.yml@master
     with:
       timeout_minutes: 30
     secrets:
