@@ -5,8 +5,8 @@ Change log for risclog.sqlalchemy
 9.1.2 (unreleased)
 ==================
 
-- Nothing changed yet.
-
+- deps: update dependencies
+  (https://redmine.risclog.de/issues/46028)
 
 9.1.1 (2026-10-13)
 ==================
