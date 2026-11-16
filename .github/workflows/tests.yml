@@ -12,7 +12,7 @@ on:
 
 jobs:
   test:
-    uses: risclog-solution/gha_workflow_templates/.github/workflows/pytest_uv.yml@master
+    uses: risclog-solution/gha_workflow_templates/.github/workflows/pytest_uv_selfhosted.yml@master
     with:
       timeout_minutes: 30
 
@@ -24,12 +24,6 @@ jobs:
 
   pre-commit:
     uses: risclog-solution/gha_workflow_templates/.github/workflows/pre_commit.yml@master
-
-  sonarqube:
-    needs: coverage
-    uses: risclog-solution/gha_workflow_templates/.github/workflows/sonarqube.yml@master
-    secrets:
-      SONARQUBETOKEN: ${{ secrets.SONARQUBETOKEN }}
 
   publish-test-results:
     needs: test
