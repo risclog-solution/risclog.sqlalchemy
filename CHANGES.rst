@@ -7,6 +7,8 @@ Change log for risclog.sqlalchemy
 
 - deps: update dependencies
   (https://redmine.risclog.de/issues/46028)
+- Explicitly enable PEP 420 namespace package discovery
+  (https://redmine.risclog.de/issues/44626)
 
 9.1.1 (2026-10-13)
 ==================
